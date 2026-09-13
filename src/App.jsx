@@ -56,16 +56,6 @@ function App() {
           <PhotoGallery />
         </section>
 
-        <section className="px-6 py-10">
-          <div className="mx-auto grid max-w-xs grid-cols-1 gap-4">
-            <a href="#songs-section" className="rounded-[2rem] bg-[var(--kraft)] p-5 text-center text-white shadow-md transition hover:-translate-y-1">
-              <span className="font-serif text-xs uppercase tracking-widest">Música</span>
-              <span className="my-3 block text-3xl text-amber-200">♫</span>
-              <span className="font-serif text-xs leading-relaxed">Sugiérenos una canción para la fiesta</span>
-            </a>
-          </div>
-        </section>
-
         <section id="rsvp-section" className="bg-gradient-to-b from-transparent to-stone-200/50 px-6 py-12">
           <div className="relative rounded-b-xl border border-[#a66e40] bg-[var(--kraft)] p-4 pt-10 shadow-2xl">
             <div className="relative z-10 bg-white p-6 shadow-md sm:p-8">

@@ -132,8 +132,18 @@ function RSVPWizard() {
 
       <section id="songs-section" className="scroll-mt-6 space-y-4 border-t border-[#e4d6bf] pt-8" aria-labelledby="songs-heading">
         <h2 id="songs-heading" className="font-serif text-3xl">Sugerir canciones</h2>
-        <p className="text-sm">Elige hasta cuatro canciones para tu invitación. Puedes agregarlas ahora o volver después; no son necesarias para confirmar asistencia.</p>
-        {!invitation ? <a href="#invitation-code" className="inline-block py-3 text-sm underline underline-offset-4">Ingresa tu código arriba para sugerir canciones</a> : (
+        <p className="text-sm">{invitation
+          ? 'Elige hasta cuatro canciones para tu invitación. Puedes agregarlas ahora o volver después; no son necesarias para confirmar asistencia.'
+          : 'Ingresa el código de tu invitación para sugerir hasta cuatro canciones. No necesitas confirmar asistencia para hacerlo.'}</p>
+        {!invitation ? (
+          <button type="button" className={buttonClass} disabled={access.busy} onClick={() => {
+            const input = document.getElementById('invitation-code')
+            input?.focus({ preventScroll: true })
+            input?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' })
+          }}>
+            Ingresar código
+          </button>
+        ) : (
           <form onSubmit={event => save(event, 'songs')} className="space-y-4" aria-busy={songsState.busy}>
             <p className="text-xs">Disponible hasta: {closeLabel(invitation.songsClose)} (hora de Colombia).</p>
             {invitation.songsClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para sugerir canciones ha terminado. Puedes consultar tu selección.</p>}
