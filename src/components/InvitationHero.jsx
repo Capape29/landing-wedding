@@ -1,4 +1,5 @@
 import AudioPlayer from './AudioPlayer'
+import RevealImage from './RevealImage'
 
 const couplePhoto = '/images/imagen_1.webp'
 
@@ -19,7 +20,7 @@ function InvitationHero() {
         <div className="relative overflow-visible border-0 bg-transparent p-0 shadow-none">
           <div className="relative z-10 mx-auto w-full max-w-[360px] rotate-[-1deg] sm:max-w-[400px]">
             <div className="aspect-[4/5] overflow-hidden">
-              <img src={couplePhoto} alt="Gustavo y Laura" className="h-full w-full object-cover saturate-[0.85]" />
+              <RevealImage src={couplePhoto} alt="Gustavo y Laura" className="h-full w-full object-cover saturate-[0.85]" />
             </div>
           </div>
         </div>

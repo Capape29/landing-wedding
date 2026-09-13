@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import RevealImage from './RevealImage'
 
 const weddingDate = new Date('2026-12-05T16:00:00-05:00').getTime()
 
@@ -22,7 +23,7 @@ function Countdown() {
 
   return (
     <section className="relative isolate overflow-hidden px-6 py-12 text-center">
-      <img
+      <RevealImage
         src="/images/imagen3.webp"
         alt=""
         aria-hidden="true"

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import RevealImage from './RevealImage'
 
 function isSafeBlobUrl(value) {
   try {
@@ -85,7 +86,8 @@ function PhotoGallery() {
               key={`${file.name}-${file.lastModified}`}
               className="overflow-hidden rounded-xl border border-[#dcccb5] bg-white"
             >
-              <div
+              <RevealImage
+                as="div"
                 role="img"
                 aria-label={file.name}
                 className="h-48 w-full bg-cover bg-center"

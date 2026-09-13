@@ -1,5 +1,7 @@
 import Countdown from './components/Countdown'
+import RevealImage from './components/RevealImage'
 import DressCode from './components/DressCode'
+import GiftSection from './components/GiftSection'
 import InvitationHero from './components/InvitationHero'
 import PhotoGallery from './components/PhotoGallery'
 import RSVPWizard from './components/RSVPWizard'
@@ -31,7 +33,7 @@ function App() {
         <WeddingDetails />
 
         <section className="py-6" aria-label="Detalles de nuestra celebración">
-          <img
+          <RevealImage
             src="/images/imagen2.webp"
             alt="Detalles de la celebración de la boda"
             className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
@@ -41,12 +43,14 @@ function App() {
         <DressCode />
 
         <section aria-label="Momentos de nuestra historia" className="py-6">
-          <img
+          <RevealImage
             src="/images/imagen4.webp"
             alt="Momento especial de la boda"
             className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
           />
         </section>
+
+        <GiftSection />
 
         <section id="album" className="bg-[#f8f4ee] px-6 py-8">
           <PhotoGallery />

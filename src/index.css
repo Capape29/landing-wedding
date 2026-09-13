@@ -80,3 +80,23 @@ input {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
 }
+
+.image-reveal {
+  transition: opacity 800ms ease-out, translate 800ms ease-out;
+}
+
+.image-reveal.image-reveal-pending {
+  opacity: 0 !important;
+  translate: 0 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-reveal {
+    transition: none;
+  }
+
+  .image-reveal.image-reveal-pending {
+    opacity: revert !important;
+    translate: none;
+  }
+}
