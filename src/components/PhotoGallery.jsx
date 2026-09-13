@@ -1,102 +1,47 @@
-import { useEffect, useMemo, useState } from 'react'
-import RevealImage from './RevealImage'
-
-function isSafeBlobUrl(value) {
-  try {
-    const parsed = new URL(value)
-    return parsed.protocol === 'blob:'
-  } catch {
-    return false
-  }
-}
-
-function getSafePreviewStyle(url) {
-  if (!isSafeBlobUrl(url)) {
-    return undefined
-  }
-
-  const escapedUrl = url.replaceAll('"', '%22')
-  return { backgroundImage: `url("${escapedUrl}")` }
-}
+﻿// Pegar aquí el enlace del álbum de Google Photos con colaboración activada.
+const GOOGLE_PHOTOS_ALBUM_URL = 'https://photos.app.goo.gl/KCYiQEM9m7xJpbzo7'
 
 function PhotoGallery() {
-  const [selectedFiles, setSelectedFiles] = useState([])
-
-  const previews = useMemo(
-    () => selectedFiles.map((file) => ({ file, url: URL.createObjectURL(file) })),
-    [selectedFiles],
-  )
-
-  useEffect(
-    () => () => {
-      previews.forEach(({ url }) => URL.revokeObjectURL(url))
-    },
-    [previews],
-  )
-
-  const handleFileChange = (event) => {
-    const files = Array.from(event.target.files ?? []).filter((file) =>
-      file.type.startsWith('image/'),
-    )
-    setSelectedFiles(files)
-  }
+  const buttonClassName = 'inline-flex min-h-11 items-center justify-center rounded-full bg-[#c5ab84] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b99d74] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2 text-center">
+    <div className="space-y-6 text-center">
+      <div className="space-y-2">
         <h2 className="font-serif text-3xl text-[#4e3f2d]">Álbum colaborativo</h2>
         <p className="text-sm text-[#6b5b45] sm:text-base">
-          Sube tus recuerdos del evento. Puedes conectar aquí tu widget de
-          Cloudinary o WedUploader.
+          Comparte los momentos que capturaste y disfruta los recuerdos de nuestra celebración.
         </p>
       </div>
 
-      <div className="rounded-2xl border border-dashed border-[#ccb592] bg-[#faf6ef] p-4 text-sm text-[#6b5b45]">
-        <p className="font-medium">Zona de carga lista para integrar</p>
-        <iframe
-          title="Widget de carga de fotos"
-          src="about:blank"
-          className="mt-3 h-28 w-full rounded-xl border border-[#d8c9b2]/70 bg-white"
-        />
-      </div>
-
-      <label
-        htmlFor="photo-upload"
-        className="inline-flex cursor-pointer items-center rounded-full bg-[#c5ab84] px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-[#b99d74]"
-      >
-        Seleccionar fotos
-      </label>
-      <input
-        id="photo-upload"
-        type="file"
-        accept="image/*"
-        multiple
-        className="sr-only"
-        onChange={handleFileChange}
-      />
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {previews.length === 0 ? (
-          <p className="col-span-full rounded-xl border border-[#dcccb5] bg-white/80 p-4 text-sm text-[#6b5b45]">
-            Aún no hay fotos seleccionadas.
-          </p>
+      <div className="space-y-3">
+        {GOOGLE_PHOTOS_ALBUM_URL ? (
+          <a
+            href={GOOGLE_PHOTOS_ALBUM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonClassName}
+            aria-describedby="album-help"
+          >
+            Compartir fotos
+          </a>
         ) : (
-          previews.map(({ file, url }) => (
-            <article
-              key={`${file.name}-${file.lastModified}`}
-              className="overflow-hidden rounded-xl border border-[#dcccb5] bg-white"
-            >
-              <RevealImage
-                as="div"
-                role="img"
-                aria-label={file.name}
-                className="h-48 w-full bg-cover bg-center"
-                style={getSafePreviewStyle(url)}
-              />
-              <p className="truncate p-3 text-xs text-[#6b5b45]">{file.name}</p>
-            </article>
-          ))
+          <button
+            type="button"
+            disabled
+            className={`${buttonClassName} cursor-not-allowed opacity-60`}
+            aria-describedby="album-status album-help"
+          >
+            Compartir fotos
+          </button>
         )}
+        {!GOOGLE_PHOTOS_ALBUM_URL && (
+          <p id="album-status" className="text-sm text-[#6b5b45]">
+            El álbum estará disponible próximamente.
+          </p>
+        )}
+        <p id="album-help" className="mx-auto max-w-sm text-xs leading-relaxed text-[#6b5b45]">
+          Se abrirá Google Photos. Inicia sesión con tu cuenta de Google para añadir tus fotos.
+        </p>
       </div>
     </div>
   )
