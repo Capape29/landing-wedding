@@ -34,7 +34,7 @@ function App() {
           <img
             src="/images/imagen2.webp"
             alt="Detalles de la celebración de la boda"
-            className="h-auto w-full rounded-none object-contain shadow-sm"
+            className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
           />
         </section>
 
@@ -44,7 +44,7 @@ function App() {
           <img
             src="/images/imagen4.webp"
             alt="Momento especial de la boda"
-            className="h-auto w-full rounded-none object-contain shadow-sm"
+            className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
           />
         </section>
 
