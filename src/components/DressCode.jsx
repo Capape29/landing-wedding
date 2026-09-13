@@ -1,6 +1,6 @@
 function DressCode() {
   return (
-    <section className="border-y border-stone-200 bg-stone-50 px-6 py-10 text-center">
+    <section className="bg-stone-50 px-6 py-10 text-center">
       <h2 className="font-script text-5xl text-[var(--gold)]">Dress code</h2>
       <p className="mb-6 font-serif text-xs uppercase tracking-[0.2em] text-stone-500">Rigurosa etiqueta</p>
       <div className="border border-stone-200 bg-white p-6 shadow-sm">

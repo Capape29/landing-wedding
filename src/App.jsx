@@ -18,20 +18,37 @@ function App() {
             </p>
             <div className="my-6 flex items-center justify-center gap-4">
               <span className="h-px w-12 bg-stone-300" />
-              <span className="font-script text-3xl text-[var(--gold)]">F &amp; L</span>
+              <span className="font-script text-3xl text-[var(--gold)]">G &amp; L</span>
               <span className="h-px w-12 bg-stone-300" />
             </div>
-            <h2 className="font-serif text-xl uppercase tracking-widest">Fernando &amp; Liliana</h2>
-            <p className="mt-1 font-serif text-lg font-semibold tracking-widest text-[var(--kraft-dark)]">22 · 10 · 2026</p>
-            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+de+Fernando+y+Liliana&dates=20261022T210000Z/20261023T080000Z" target="_blank" rel="noreferrer" className="mt-8 inline-flex rounded-full bg-[var(--kraft-dark)] px-6 py-3 font-sans text-[10px] uppercase tracking-widest text-white shadow-md transition hover:bg-[var(--charcoal)]">Añádelo a tu calendario</a>
+            <h2 className="font-serif text-xl uppercase tracking-widest">Gustavo &amp; Laura</h2>
+            <p className="mt-1 font-serif text-lg font-semibold tracking-widest text-[var(--kraft-dark)]">5 · 12 · 2026</p>
+            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+de+Gustavo+y+Laura&dates=20261205T210000Z/20261206T080000Z" target="_blank" rel="noreferrer" className="mt-8 inline-flex rounded-full bg-[var(--kraft-dark)] px-6 py-3 font-sans text-[10px] uppercase tracking-widest text-white shadow-md transition hover:bg-[var(--charcoal)]">Añádelo a tu calendario</a>
           </div>
         </section>
 
-        <WeddingDetails />
-        <DressCode />
         <Countdown />
+        <WeddingDetails />
 
-        <section id="album" className="border-t border-stone-200 bg-[#f8f4ee] px-6 py-8">
+        <section className="py-6" aria-label="Detalles de nuestra celebración">
+          <img
+            src="/images/imagen2.webp"
+            alt="Detalles de la celebración de la boda"
+            className="h-auto w-full rounded-none object-contain shadow-sm"
+          />
+        </section>
+
+        <DressCode />
+
+        <section aria-label="Momentos de nuestra historia" className="py-6">
+          <img
+            src="/images/imagen4.webp"
+            alt="Momento especial de la boda"
+            className="h-auto w-full rounded-none object-contain shadow-sm"
+          />
+        </section>
+
+        <section id="album" className="bg-[#f8f4ee] px-6 py-8">
           <PhotoGallery />
         </section>
 
@@ -61,7 +78,7 @@ function App() {
               <p className="mt-2 font-serif text-sm italic text-stone-600">Haznos saber si podremos contar contigo en este día tan especial.</p>
               <div className="mt-6"><RSVPWizard /></div>
             </div>
-            <div className="relative z-20 mx-auto -mb-9 flex h-12 w-12 items-center justify-center rounded-full border-2 border-dashed border-white bg-[var(--gold)] font-script text-xl text-amber-100 shadow-md">FL</div>
+            <div className="relative z-20 mx-auto -mb-9 flex h-12 w-12 items-center justify-center rounded-full border-2 border-dashed border-white bg-[var(--gold)] font-script text-xl text-amber-100 shadow-md">GL</div>
           </div>
           <div className="mt-12 text-center">
             <p className="font-script text-5xl text-[var(--kraft-dark)]">¡No faltes!</p>
@@ -69,8 +86,8 @@ function App() {
           </div>
         </section>
 
-        <footer className="border-t border-stone-800 bg-stone-900 px-4 py-6 text-center font-serif text-xs tracking-wider text-stone-400">
-          <p className="text-stone-300">Fernando &amp; Liliana · 22 de Octubre, 2026</p>
+        <footer className="bg-stone-900 px-4 py-6 text-center font-serif text-xs tracking-wider text-stone-400">
+          <p className="text-stone-300">Gustavo &amp; Laura · 5 de diciembre de 2026</p>
           <p className="mt-1 text-[10px] uppercase tracking-widest text-stone-500">Con amor para toda la vida</p>
         </footer>
       </div>

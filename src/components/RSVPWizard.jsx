@@ -5,7 +5,7 @@ const GOOGLE_SCRIPT_URL =
   'https://script.google.com/macros/s/REEMPLAZAR_CON_TU_SCRIPT_ID/exec'
 
 const GOOGLE_CALENDAR_URL =
-  'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+de+la+Pareja&dates=20270921T160000Z/20270921T220000Z&details=Nos+encantar%C3%ADa+contar+contigo+en+nuestro+d%C3%ADa+especial.&location=Por+confirmar'
+  'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+de+Gustavo+y+Laura&dates=20261205T210000Z/20261206T080000Z&details=Nos+encantar%C3%ADa+contar+contigo+el+5+de+diciembre+de+2026.&location=Por+confirmar'
 
 const guestCountByMode = {
   Soltero: 1,
