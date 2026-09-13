@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: body.action, code: body.code.trim().toUpperCase(), attendees: body.attendees, songs: body.songs, secret, clientKey }),
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(45000),
     })
     if (!upstream.ok) throw new Error('upstream')
     const result = await upstream.json().catch(() => { throw new Error('Invalid upstream response') })

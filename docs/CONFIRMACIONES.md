@@ -4,9 +4,17 @@
 
 [Boda de Gustavo y Laura — Asistencia y canciones](https://docs.google.com/spreadsheets/d/1MpTY3RmTCeK0rl8u2IfCe7nzZGpMmQXrKWjS0oLe9eI/edit)
 
-Está en la carpeta ChatGPT de la cuenta de Google Drive conectada. Se verificó que no está compartida. No contiene invitados reales ni respuestas ficticias.
+Está en la carpeta ChatGPT de `cholasbegambre@gmail.com`, propietaria de la hoja, y compartida como Editor con `bodalauraygustavo5@gmail.com`.
 
-Las seis pestañas y los cierres ya están creados. Falta cargar los nombres y grupos, instalar el script y conectarlo a Vercel. No hay un despliegue de producción verificado todavía.
+La conexión de producción quedó verificada el 13 de septiembre de 2026. Se probaron consultas, asistencia parcial, canciones independientes, actualización sin duplicados y eliminación de canciones. Se comprobaron los registros y totales directamente en la hoja y se retiraron los datos ficticios. Falta cargar los nombres y grupos reales y generar sus códigos.
+
+- Página: https://landing-wedding-phi.vercel.app
+- Apps Script de la cuenta propietaria: https://script.google.com/d/1lPr3mI13uUej73lP7jHeeL-k47z7cs4avSzK7krsrKrWaXHWP3EDh57i/edit
+- Implementación activa: `AKfycbyYqZFUba9I20SUjjSyrJHhD9QGRUp7B1ubTp6GCD8b22RsUlU-UcZQoZQUMlUJ6iLJfg`, versión 2, sin inicialización temporal.
+- `GOOGLE_SCRIPT_URL` y `GOOGLE_SCRIPT_SECRET` ya están configuradas en Vercel Production. No repetir la configuración inicial para el uso diario.
+- Margen de espera: 45 segundos hacia Google, 55 segundos en el formulario y 60 segundos de duración máxima de la función de Vercel.
+
+Los pasos siguientes sirven para mantenimiento o para recrear la instalación.
 
 ## 1. Instalar Google Apps Script
 
@@ -101,6 +109,6 @@ Antes de repartir códigos:
 5. Comprueba en Vercel los errores de `/api/invitation` y en Apps Script el historial de ejecuciones. No registres códigos, secretos ni cuerpos de solicitudes.
 6. Retira únicamente las filas de la invitación de prueba de Invitaciones, Integrantes y Respuestas, y ejecuta `refreshViews` antes de usarla con invitados reales.
 
-La prueba real Vercel → Apps Script → Sheets queda pendiente de configurar y publicar esos servicios. Las pruebas automatizadas locales no sustituyen esa comprobación.
+La prueba real Vercel → Apps Script → Sheets se completó el 13 de septiembre de 2026. Repetirla con datos temporales después de cambiar la hoja, el script o sus credenciales.
 
 Referencias: [Vercel Node.js Functions](https://vercel.com/docs/functions/runtimes/node-js), [Apps Script Web Apps](https://developers.google.com/apps-script/guides/web), [Lock Service](https://developers.google.com/apps-script/reference/lock).

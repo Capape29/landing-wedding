@@ -9,7 +9,7 @@ async function request(action, code, data = {}) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action, code, ...data }),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(55000),
   })
   let result
   try { result = await response.json() } catch { throw new Error('El servicio no está disponible. Inténtalo más tarde.') }

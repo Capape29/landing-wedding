@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/invitation.js": {
+      "maxDuration": 60
+    }
+  }
+}
