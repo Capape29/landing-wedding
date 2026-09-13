@@ -1,18 +1,45 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Sans:wght@400;500;600&family=Great+Vibes&display=swap');
+@import "tailwindcss";
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #3f3528;
-  background-color: #f6efe5;
+  --cream: #f7f1e8;
+  --paper: #fffdf9;
+  --ink: #3f3528;
+  --muted-ink: #76654f;
+  --gold: #b7955b;
+  --gold-light: #d9c29a;
+  --line: #e4d6bf;
+  --kraft: #b98254;
+  --kraft-dark: #8e5630;
+  --charcoal: #2d2825;
+}
+
+html {
+  background: var(--cream);
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--cream);
+  background-image: radial-gradient(var(--gold-light) 0.7px, transparent 0.7px);
+  background-size: 22px 22px;
 }
 
 .font-serif {
-  font-family: 'Cormorant Garamond', Georgia, Cambria, 'Times New Roman', Times, serif;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-script {
+  font-family: 'Great Vibes', cursive;
+}
+
+button,
+input {
+  font: inherit;
 }
 
 @keyframes fade-in {

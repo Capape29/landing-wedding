@@ -40,21 +40,28 @@ function AudioPlayer() {
   }, [])
 
   return (
-    <>
+    <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-stone-200 bg-stone-50/80 px-4 py-3 text-left shadow-sm backdrop-blur-sm">
       <audio ref={audioRef} src="/audio/cancion.mp3" preload="none" loop />
-      <button
-        type="button"
-        onClick={handleToggle}
-        className="fixed bottom-5 right-5 z-40 rounded-full border border-[#c5ab84] bg-[#f5ead8] px-5 py-3 text-sm font-medium text-[#5a472f] shadow-lg shadow-[#bca178]/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#f0e1ca] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c5ab84]"
-      >
-        <span className={isPlaying ? 'animate-pulse' : ''}>
-          {isPlaying ? '⏸️ Pausar' : '🎵 Nuestra Canción'}
+      <p className="mb-2 text-center font-serif text-sm italic text-stone-700">
+        Dale play para escuchar nuestra canción
+      </p>
+      <div className="flex items-center justify-center gap-4">
+        <span aria-hidden="true" className="text-sm text-[var(--gold)]">♫</span>
+        <button
+          type="button"
+          onClick={handleToggle}
+          aria-label={isPlaying ? 'Pausar nuestra canción' : 'Reproducir nuestra canción'}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--charcoal)] text-lg text-stone-100 shadow-md transition-all hover:scale-105 hover:bg-[var(--kraft-dark)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gold)]"
+        >
+          <span aria-hidden="true" className={isPlaying ? 'animate-pulse' : ''}>
+            {isPlaying ? 'Ⅱ' : '▶'}
+          </span>
+        </button>
+        <span className="min-w-24 text-left text-xs text-stone-500">
+          {hasInteracted ? (isPlaying ? 'Reproduciendo' : 'En pausa') : 'Toca para escuchar'}
         </span>
-        {hasInteracted ? null : (
-          <span className="ml-2 text-xs text-[#83694a]">Toca para escuchar</span>
-        )}
-      </button>
-    </>
+      </div>
+    </div>
   )
 }
 

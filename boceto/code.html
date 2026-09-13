@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fernando &amp; Liliana | Nuestra Boda</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            kraft: {
+              light: '#DEBEA0',
+              DEFAULT: '#B98254',
+              dark: '#8E5630',
+            },
+            terracotta: '#A85938',
+            gold: '#D4AF37',
+            cream: '#FAF6F0',
+            paper: '#FDFBF7',
+            charcoal: '#2D2825',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            script: ['"Great Vibes"', 'cursive'],
+            sans: ['"Montserrat"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Google Fonts: Cormorant Garamond, Great Vibes, Montserrat -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&amp;family=Great+Vibes&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Custom Styles: Shadows, Wax Seal, Decorative Borders -->
+<style data-purpose="decorations">
+    .paper-texture {
+      background-color: #FAF7F2;
+      background-image: radial-gradient(#E8DFC8 0.75px, transparent 0.75px), radial-gradient(#E8DFC8 0.75px, #FAF7F2 0.75px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+    }
+    .card-border-ornate {
+      border: 1px solid #C4A480;
+      position: relative;
+    }
+    .card-border-ornate::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(196, 164, 128, 0.45);
+      pointer-events: none;
+    }
+    .envelope-shape {
+      clip-path: polygon(0% 0%, 50% 35%, 100% 0%, 100% 100%, 0% 100%);
+    }
+    .wax-seal {
+      background: radial-gradient(circle at 35% 35%, #D4AF37, #A07817 70%, #684F0C 100%);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 6px 14px rgba(0,0,0,0.25);
+    }
+    .wax-seal-border {
+      border: 2px dashed rgba(255,255,255,0.4);
+    }
+    .calla-shadow {
+      filter: drop-shadow(0 12px 18px rgba(45, 40, 37, 0.15));
+    }
+    .polaroid-card {
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.12), 0 8px 10px -6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .polaroid-card:hover {
+      transform: translateY(-4px) scale(1.01);
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.03); }
+    }
+    .pulse-animation {
+      animation: pulse-slow 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-stone-100 text-charcoal paper-texture min-h-screen selection:bg-kraft-light selection:text-charcoal font-sans antialiased flex flex-col items-center">
+<!-- BEGIN: MainContainer (Mobile-First Editorial Frame) -->
+<main class="w-full max-w-xl mx-auto min-h-screen bg-[#FCFAF6] shadow-2xl relative overflow-hidden border-x border-stone-200">
+<!-- BEGIN: AudioPlayerHeader (Floating/Interactive Audio Control) -->
+<header class="w-full pt-10 pb-6 px-6 text-center relative z-20" data-purpose="invitation-hero">
+<!-- Monogram / Top Branding -->
+<div class="inline-flex items-center justify-center space-x-3 mb-3 text-kraft">
+<span class="h-[1px] w-10 bg-kraft/40"></span>
+<span class="text-xs uppercase tracking-[0.3em] font-serif text-stone-500">Nuestra Boda</span>
+<span class="h-[1px] w-10 bg-kraft/40"></span>
+</div>
+<!-- Couple Names in Script & Serif Elegance -->
+<h1 class="text-4xl sm:text-5xl font-serif tracking-wide text-charcoal font-semibold mb-2">
+<span class="font-script text-5xl sm:text-6xl text-kraft-dark block sm:inline mr-1">Fernando</span>
+<span class="font-serif italic text-3xl font-light text-stone-400">&amp;</span>
+<span class="font-script text-5xl sm:text-6xl text-kraft-dark block sm:inline ml-1">Liliana</span>
+</h1>
+<p class="text-stone-700 tracking-[0.25em] text-sm sm:text-base uppercase font-serif mt-3 font-medium">
+        22 OCTUBRE 2026
+      </p>
+<!-- BEGIN: Envelope & Calla Lily Visual Composition -->
+<div class="relative mt-8 mb-6 mx-auto max-w-[340px] pt-4" data-purpose="envelope-polaroid-hero">
+<!-- Elegant Calla Lily Botanical Accent (SVG Graphics) -->
+<div class="absolute -top-6 -right-6 w-32 h-44 pointer-events-none z-10 calla-shadow">
+<svg class="w-full h-full" fill="none" viewbox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+<path d="M120 210 C110 160 105 110 125 50 C130 35 142 20 148 30 C154 40 145 65 130 90 C118 110 115 160 115 210" stroke="#7A9A65" stroke-linecap="round" stroke-width="4"></path>
+<!-- Flower Lily 1 -->
+<path d="M130 35 C115 15 85 20 90 48 C95 65 115 78 128 72 C138 68 148 50 130 35 Z" fill="#FDFEFA" stroke="#D3CEBE" stroke-width="1.5"></path>
+<path d="M108 45 C112 40 120 38 124 48 C120 54 114 53 108 45 Z" fill="#F4E6B4"></path>
+<path d="M112 46 L118 36" stroke="#DA9B26" stroke-linecap="round" stroke-width="3"></path>
+<!-- Flower Lily 2 (Side angle) -->
+<path d="M85 85 C65 70 50 82 55 102 C60 118 80 125 90 120 C100 112 102 96 85 85 Z" fill="#FDFCFA" stroke="#D3CEBE" stroke-width="1.5"></path>
+<path d="M72 98 C75 92 82 91 85 99 C81 103 76 103 72 98 Z" fill="#F4E6B4"></path>
+<path d="M75 99 L80 91" stroke="#DA9B26" stroke-linecap="round" stroke-width="2.5"></path>
+<path d="M85 115 C75 140 70 175 75 215" stroke="#708C5D" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+</div>
+<!-- Left White Orchid / Calla Stem -->
+<div class="absolute -bottom-4 -left-6 w-24 h-40 pointer-events-none z-20 calla-shadow">
+<svg class="w-full h-full" fill="none" viewbox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 150 C45 100 30 70 20 40 C15 25 35 15 45 28 C55 42 42 70 45 100" stroke="#7A9A65" stroke-width="3.5"></path>
+<ellipse cx="32" cy="30" fill="#FAF7F0" rx="16" ry="24" stroke="#D1C7B7" transform="rotate(-20 32 30)"></ellipse>
+<circle cx="34" cy="28" fill="#ECC867" r="4"></circle>
+</svg>
+</div>
+<!-- Kraft Pocket Envelope Base -->
+<div class="relative w-full bg-[#BA8252] rounded-t-sm shadow-xl p-3 pb-8 pt-8 overflow-hidden border border-[#A66E40]">
+<!-- Inner Envelope Flap Illusion -->
+<div class="absolute inset-x-0 top-0 h-28 bg-[#9F6A3D] envelope-shape opacity-90 shadow-inner"></div>
+<!-- Polaroid Photo Slid into Envelope -->
+<div class="polaroid-card bg-white p-3 pb-6 rounded shadow-md relative z-10 mx-auto w-[240px] rotate-[-1deg] border border-stone-100">
+<div class="relative overflow-hidden aspect-[4/5] bg-stone-200">
+<img alt="Fernando &amp; Liliana" class="w-full h-full object-cover object-center filter saturate-[0.85] contrast-[1.05]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzNUmHvYS_QAlnR4MNQ3To-Hrt8qxYrtoowuTorI4llcietXina-0wuIxvgxT7UD3EE3jIxAiy150cBjSPXiq8P68SMDnxWliPM-Iqkp9RNf71VaZNjO1bn2rZ6vTPCNd9W9IU9A4hUxNxI14k1vrMe2jZwI1GlLy2D6rDxgj5zMtbvg9SgMZK2iWzG8CPtdoVyvhBqYVw-a0gTh7oy464FZpEgRCJB7h3LZTGHhv1dGdb-Z6_a-KShg"/>
+<!-- Vintage Vignette Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-stone-900/20 via-transparent to-transparent pointer-events-none"></div>
+</div>
+<p class="font-script text-center text-xl text-stone-700 mt-2 mb-[-6px]">Fernando &amp; Liliana</p>
+</div>
+<!-- Envelope Front V-Fold -->
+<div class="absolute -bottom-1 left-0 right-0 h-24 bg-gradient-to-t from-[#B07746] to-[#BA8252] border-t border-[#A8703F]/60 flex items-center justify-center z-10">
+<span class="text-[10px] tracking-[0.25em] text-[#F3E3D3] font-serif uppercase">Boda Soñada</span>
+</div>
+</div>
+</div>
+<!-- END: Envelope Visual Composition -->
+<!-- BEGIN: Interactive Music Player -->
+<section class="mt-6 px-4 py-3 max-w-sm mx-auto bg-stone-50/80 rounded-2xl border border-stone-200 shadow-sm backdrop-blur-sm" data-purpose="music-player">
+<p class="font-serif italic text-stone-700 text-sm mb-2">Dale play para escuchar nuestra canción</p>
+<!-- Scrubbing / Progress Indicator -->
+<div class="relative w-full h-1.5 bg-stone-200 rounded-full mb-3 cursor-pointer" id="progress-bar-container">
+<div class="h-full bg-kraft rounded-full transition-all duration-300" id="audio-progress" style="width: 32%;"></div>
+<div class="absolute top-1/2 -mt-1.5 left-[32%] w-3 h-3 bg-kraft-dark rounded-full shadow border-2 border-white -translate-x-1/2"></div>
+</div>
+<!-- Playback Controls -->
+<div class="flex items-center justify-center space-x-6 text-stone-600">
+<button class="hover:text-kraft-dark transition-colors p-1" onclick="toggleLoop()" title="Repetir">
+<i class="w-4 h-4" data-lucide="repeat"></i>
+</button>
+<button class="hover:text-kraft-dark transition-colors p-1" onclick="restartAudio()" title="Anterior">
+<i class="w-5 h-5" data-lucide="skip-back"></i>
+</button>
+<!-- Master Play/Pause Toggle -->
+<button class="w-11 h-11 rounded-full bg-charcoal text-stone-100 flex items-center justify-center shadow-md hover:bg-kraft-dark transition-all transform hover:scale-105 active:scale-95" id="play-pause-btn" title="Reproducir">
+<i class="w-5 h-5 ml-0.5" data-lucide="play" id="play-icon"></i>
+<i class="w-5 h-5 hidden" data-lucide="pause" id="pause-icon"></i>
+</button>
+<button class="hover:text-kraft-dark transition-colors p-1" onclick="restartAudio()" title="Siguiente">
+<i class="w-5 h-5" data-lucide="skip-forward"></i>
+</button>
+<button class="hover:text-kraft-dark transition-colors p-1" title="Aleatorio">
+<i class="w-4 h-4" data-lucide="shuffle"></i>
+</button>
+</div>
+<!-- Audio element with royalty-free romantic acoustic snippet -->
+<audio id="wedding-audio" loop="" preload="none">
+<source src="https://actions.google.com/sounds/v1/water/rain_heavy.ogg" type="audio/ogg"/>
+</audio>
+</section>
+<!-- END: Interactive Music Player -->
+</header>
+<!-- END: AudioPlayerHeader -->
+<!-- BEGIN: Blessing & Save The Date Section -->
+<section class="py-8 px-6 text-center" data-purpose="blessing-message">
+<!-- Ornate Verification Card -->
+<div class="card-border-ornate bg-white/90 p-8 sm:p-10 rounded-sm shadow-md max-w-md mx-auto relative">
+<p class="font-serif text-base sm:text-lg leading-relaxed text-stone-700 italic font-normal">
+          “Con la bendición de Dios y el amor que une nuestras vidas, queremos compartir con ustedes la alegría de este día en el que uniremos nuestros corazones para siempre.”
+        </p>
+<div class="my-6 flex items-center justify-center space-x-4">
+<span class="h-[1px] w-12 bg-stone-300"></span>
+<span class="font-script text-3xl text-kraft">F &amp; L</span>
+<span class="h-[1px] w-12 bg-stone-300"></span>
+</div>
+<h3 class="font-serif text-xl tracking-widest text-charcoal uppercase">
+          Fernando &amp; Liliana
+        </h3>
+<p class="font-serif text-lg tracking-widest text-kraft-dark mt-1 font-semibold">
+          22 . 10 . 2026
+        </p>
+<!-- Decorative Floral Button: Add to Calendar -->
+<div class="mt-8 flex justify-center">
+<button class="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-[#A36336] text-white text-xs uppercase tracking-widest font-sans font-medium hover:bg-[#8B4F26] transition-all shadow-md hover:shadow-lg" onclick="addToCalendarModal()">
+<i class="w-4 h-4 text-amber-200" data-lucide="calendar-plus"></i>
+<span>Añádelo a tu Calendario</span>
+</button>
+</div>
+</div>
+</section>
+<!-- END: Blessing & Save The Date Section -->
+<!-- BEGIN: Itinerary (Ceremonia & Recepción) -->
+<section class="py-10 px-6 relative" data-purpose="itinerary-cards">
+<div class="text-center mb-8">
+<span class="text-xs uppercase tracking-[0.3em] font-serif text-kraft font-semibold">El Gran Día</span>
+<h2 class="text-3xl font-serif text-charcoal mt-1">Nuestra Celebración</h2>
+</div>
+<div class="space-y-8 max-w-md mx-auto">
+<!-- Tarjeta Ceremonia (Con Sello de Cera Dorado) -->
+<article class="bg-white rounded-lg p-6 shadow-md border border-stone-200 relative pt-9">
+<!-- Wax Seal Medallion -->
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full wax-seal flex items-center justify-center wax-seal-border z-10">
+<!-- Rose Emboss SVG -->
+<svg class="w-6 h-6 text-amber-100/90" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2C9.5 2 7.8 3.5 7.5 5.5C6.2 6.1 5.3 7.3 5.1 8.8C4.5 13.5 12 18 12 22C12 18 19.5 13.5 18.9 8.8C18.7 7.3 17.8 6.1 16.5 5.5C16.2 3.5 14.5 2 12 2ZM12 4C13.5 4 14.7 5 15 6.3C14.1 6.8 13.1 7.1 12 7.1C10.9 7.1 9.9 6.8 9 6.3C9.3 5 10.5 4 12 4Z" opacity="0.8"></path>
+</svg>
+</div>
+<div class="text-center">
+<span class="text-xs font-serif tracking-[0.25em] text-kraft-dark uppercase font-semibold">Momento Sagrado</span>
+<h3 class="text-2xl font-serif text-charcoal tracking-wide mt-1">CEREMONIA</h3>
+<p class="font-serif text-stone-600 text-base mt-2 leading-relaxed">
+              Parroquia Nuestra Señora de la Salud<br/>
+<strong class="font-medium text-stone-800">Bojacá — 4:00 pm</strong>
+</p>
+<!-- Church Line Drawing Graphic -->
+<div class="my-4 flex justify-center opacity-80 text-stone-600">
+<svg class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 64 64">
+<path d="M32 6V14M28 10H36" stroke-linecap="round"></path>
+<path d="M32 14L22 24V54H42V24L32 14Z"></path>
+<path d="M12 36L22 28V54H12V36Z"></path>
+<path d="M52 36L42 28V54H52V36Z"></path>
+<path d="M30 54V42C30 40.8954 30.8954 40 32 40C33.1046 40 34 40.8954 34 42V54"></path>
+<circle cx="32" cy="28" r="3"></circle>
+</svg>
+</div>
+<a class="inline-flex items-center space-x-2 px-5 py-2 border border-kraft text-kraft-dark hover:bg-kraft hover:text-white rounded-full text-xs tracking-wider uppercase font-medium transition-all" href="https://maps.google.com/?q=Parroquia+Nuestra+Señora+de+la+Salud+Bojaca" rel="noopener noreferrer" target="_blank">
+<i class="w-3.5 h-3.5" data-lucide="map-pin"></i>
+<span>Ver Ubicación</span>
+</a>
+</div>
+</article>
+<!-- Tarjeta Recepción (Diseño Ovalado Terracota como la Captura) -->
+<article class="bg-[#B37947] text-white rounded-[50px] p-8 shadow-lg border-2 border-white/80 text-center relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-2xl font-serif tracking-widest uppercase font-normal text-amber-50">RECEPCIÓN</h3>
+<p class="font-serif italic text-lg text-stone-100 mt-1">Finca Villa Luz</p>
+<p class="font-serif text-sm tracking-wider uppercase text-amber-100/90 font-light mt-0.5">6:00 pm</p>
+<!-- Wedding Arch Illustration -->
+<div class="my-5 flex justify-center">
+<svg class="w-20 h-20 text-white/90" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 80 80">
+<path d="M20 70V35C20 24 29 15 40 15C51 15 60 24 60 35V70" stroke-linecap="round"></path>
+<path d="M15 70H25M55 70H65"></path>
+<!-- Floral Arch Drapery -->
+<path d="M22 28C28 22 34 26 40 23C46 26 52 22 58 28" stroke-dasharray="2 3"></path>
+<circle cx="26" cy="26" fill="currentColor" r="3"></circle>
+<circle cx="40" cy="20" fill="currentColor" r="3.5"></circle>
+<circle cx="54" cy="26" fill="currentColor" r="3"></circle>
+<path d="M20 40C24 45 28 42 32 46"></path>
+<path d="M60 40C56 45 52 42 48 46"></path>
+</svg>
+</div>
+<a class="inline-flex items-center space-x-2 px-5 py-2 bg-white/20 hover:bg-white text-white hover:text-kraft-dark rounded-full text-xs tracking-wider uppercase font-medium backdrop-blur-sm transition-all border border-white/40" href="https://maps.google.com/?q=Finca+Villa+Luz+Bojaca" rel="noopener noreferrer" target="_blank">
+<i class="w-3.5 h-3.5" data-lucide="navigation"></i>
+<span>Ver Ubicación</span>
+</a>
+</div>
+</article>
+</div>
+</section>
+<!-- END: Itinerary -->
+<!-- BEGIN: Dress Code Section -->
+<section class="py-10 px-6 bg-stone-50 border-y border-stone-200" data-purpose="dress-code">
+<div class="max-w-md mx-auto text-center">
+<h2 class="font-script text-5xl text-kraft mb-1">Dress code</h2>
+<p class="font-serif tracking-[0.2em] text-xs uppercase text-stone-500 mb-6">Rigurosa Etiqueta</p>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+<!-- Line Art Fashion Figures (Gown & Tuxedo) -->
+<div class="flex justify-center items-center space-x-8 mb-6 py-2 text-stone-700">
+<!-- Evening Dress Silhouette -->
+<div class="flex flex-col items-center">
+<svg class="w-20 h-28 text-stone-700 stroke-[1.2]" fill="none" stroke="currentColor" viewbox="0 0 60 100">
+<path d="M25 15 C26 22 22 28 20 38 C17 55 10 90 8 95 C20 96 40 96 52 95 C50 90 43 55 40 38 C38 28 34 22 35 15 Z"></path>
+<path d="M25 15 C28 17 32 17 35 15 C33 22 33 25 35 30 C30 31 30 31 25 30 C27 25 27 22 25 15 Z" fill="#FAF5EF"></path>
+<path d="M21 95 C25 80 35 80 39 95" stroke-dasharray="1 2"></path>
+</svg>
+<span class="font-serif text-xs text-stone-500 mt-2 uppercase tracking-wider">Mujeres</span>
+</div>
+<div class="h-16 w-[1px] bg-stone-200"></div>
+<!-- Formal Tuxedo Silhouette -->
+<div class="flex flex-col items-center">
+<svg class="w-16 h-28 text-stone-700 stroke-[1.2]" fill="none" stroke="currentColor" viewbox="0 0 50 100">
+<path d="M15 15 L20 45 L16 95 H24 L25 55 L26 95 H34 L30 45 L35 15 Z"></path>
+<path d="M15 15 L25 25 L35 15"></path>
+<path d="M23 20 L25 22 L27 20 L25 18 Z" fill="currentColor"></path>
+<path d="M20 45 H30"></path>
+<circle cx="25" cy="32" fill="currentColor" r="1.5"></circle>
+<circle cx="25" cy="38" fill="currentColor" r="1.5"></circle>
+</svg>
+<span class="font-serif text-xs text-stone-500 mt-2 uppercase tracking-wider">Hombres</span>
+</div>
+</div>
+<div class="space-y-1 font-serif text-stone-700 text-sm">
+<p><strong class="font-medium text-stone-900">Caballeros:</strong> Traje formal o esmoquin</p>
+<p><strong class="font-medium text-stone-900">Damas:</strong> Vestido largo de noche</p>
+</div>
+<!-- Color Restriction Badge -->
+<div class="mt-6 inline-block bg-[#8C5333] text-stone-100 px-5 py-3 rounded-md text-xs font-serif tracking-wider shadow-inner">
+<p class="font-serif italic text-amber-100 text-xs">
+              “El color blanco está reservado exclusivamente para la novia”
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Dress Code Section -->
+<!-- BEGIN: Countdown Section -->
+<section class="py-12 px-6 text-center" data-purpose="countdown-clock">
+<div class="max-w-md mx-auto">
+<!-- Scripture Quote -->
+<blockquote class="font-serif italic text-stone-600 text-sm sm:text-base leading-relaxed px-4 mb-8">
+          “Y ahora permanecen la fe, la esperanza y el amor, estos tres; pero el mayor de ellos es el amor.”
+          <footer class="text-xs uppercase tracking-widest text-kraft font-sans mt-2 font-normal">— 1 Corintios 13:13</footer>
+</blockquote>
+<h3 class="font-serif text-2xl tracking-[0.25em] text-charcoal uppercase mb-6 font-normal">
+          FALTAN
+        </h3>
+<!-- Countdown Timer Units Grid -->
+<div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-xs mx-auto text-charcoal">
+<div class="bg-white p-2.5 rounded-lg border border-stone-200 shadow-sm">
+<span class="block font-serif text-2xl sm:text-3xl font-bold text-stone-800" id="countdown-days">00</span>
+<span class="text-[10px] tracking-wider uppercase font-sans text-stone-500">Días</span>
+</div>
+<div class="bg-white p-2.5 rounded-lg border border-stone-200 shadow-sm">
+<span class="block font-serif text-2xl sm:text-3xl font-bold text-stone-800" id="countdown-hours">00</span>
+<span class="text-[10px] tracking-wider uppercase font-sans text-stone-500">Horas</span>
+</div>
+<div class="bg-white p-2.5 rounded-lg border border-stone-200 shadow-sm">
+<span class="block font-serif text-2xl sm:text-3xl font-bold text-stone-800" id="countdown-minutes">00</span>
+<span class="text-[10px] tracking-wider uppercase font-sans text-stone-500">Minutos</span>
+</div>
+<div class="bg-white p-2.5 rounded-lg border border-stone-200 shadow-sm">
+<span class="block font-serif text-2xl sm:text-3xl font-bold text-kraft-dark" id="countdown-seconds">00</span>
+<span class="text-[10px] tracking-wider uppercase font-sans text-kraft-dark font-medium">Segundos</span>
+</div>
+</div>
+<p class="font-script text-2xl text-stone-600 mt-6">Para nuestro gran día</p>
+</div>
+</section>
+<!-- END: Countdown Section -->
+<!-- BEGIN: Photo Gallery (Polaroid Moments) -->
+<section class="py-8 px-6 bg-[#F8F4EE] border-t border-stone-200" data-purpose="couple-gallery">
+<div class="text-center mb-6">
+<span class="text-xs uppercase tracking-[0.3em] font-serif text-kraft font-semibold">Nuestra Historia</span>
+<h2 class="text-3xl font-serif text-charcoal">Momentos Juntos</h2>
+</div>
+<!-- Polaroid Mosaic Style Layout -->
+<div class="relative max-w-sm mx-auto min-h-[460px] pb-6">
+<!-- Polaroid 1 (Top Left) -->
+<div class="polaroid-card bg-white p-3 pb-6 rounded shadow-md absolute top-0 left-0 w-[58%] -rotate-3 z-10">
+<div class="aspect-square overflow-hidden bg-stone-200">
+<img alt="Fernando y Liliana mirada de amor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8vefSwYxPiC0titjTh_W6LEh4XVnEeCKq9RJ9kPrvIuSbCwYadm-JrZMQMXu0hm3RZp021V9RtvUruCxUub0VKt6ELz2isFpcrvUYoUMbnZm6GqVypaM6t_ARzVpi2w0h1U2yRlT6BNwziZu3ztRoLrVYxrWGwat7FgZfQuT67M8D1NJyszwcm7geTsOZYVMNwCNNTyTkPP84NY3eddlTTFHtAtNajFuFElh-6Yg4VxJIzYNAet__mg"/>
+</div>
+<p class="text-center font-script text-stone-600 text-sm mt-2">Amor eterno</p>
+</div>
+<!-- Polaroid 2 (Top Right) -->
+<div class="polaroid-card bg-white p-3 pb-6 rounded shadow-md absolute top-12 right-0 w-[56%] rotate-3 z-20">
+<div class="aspect-square overflow-hidden bg-stone-200">
+<img alt="Complicidad de los novios" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvXUJw5GrusaToFyaRdIR9J5z9rabcmSxfuDu3WMYzhTCq3osava46d4zpkR0SzVxKTV5SF-E7TtF4K9xAJtfVSkdkOAkjVgrLkQNmCDGtgo1YO-oR6M_Y8KUP5uBWaoijaM966-8O7XAJ-DgPBEN-Tp94vql0jxzEDZH4Rda17k3acm2NgP3yx7gN32JcF7lrnL6fR8D1N67BUE_L7h5GtWm98w2vwqvO7ZyF2kieeCHNgEDErYkHEg"/>
+</div>
+<p class="text-center font-script text-stone-600 text-sm mt-2">Juntos siempre</p>
+</div>
+<!-- Polaroid 3 (Bottom Center) -->
+<div class="polaroid-card bg-white p-3 pb-6 rounded shadow-lg absolute bottom-2 left-1/2 -translate-x-1/2 w-[62%] -rotate-1 z-30">
+<div class="aspect-[4/3] overflow-hidden bg-stone-200">
+<img alt="Fernando y Liliana felices" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBdSmfta89U32Gc40iP10V6kjwyTSF_ralQH11x6aq2PvUqnX_YaVJM1QUAEijZR0eTRMFw_R8AImzpa8i1Ipi2jXis8CvZ9bUX5GlbJ88THiymD_-UHCqQGwiTGwdbrs-8MD0yvnW0WARzKMnjZHbLcR9NgB9GQa2umv1akZOIUOCyOlt7qcrl4U5as_ecYcmbftzaa7EpJMHB_Z1vqVTKIfQgsvSPSkHNqE7wQVa9cnih6AZxDnPPg"/>
+</div>
+<p class="text-center font-script text-stone-600 text-base mt-2">Por siempre</p>
+</div>
+</div>
+</section>
+<!-- END: Photo Gallery -->
+<!-- BEGIN: Guest Engagement (Music Suggestions & Photo Sharing) -->
+<section class="py-10 px-6" data-purpose="guest-interaction">
+<div class="max-w-md mx-auto space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<!-- Capsule 1: Music Request -->
+<div class="bg-[#B98254] text-white rounded-[40px] p-5 text-center flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow">
+<div>
+<span class="text-xs uppercase tracking-widest font-serif font-semibold text-stone-100">MÚSICA</span>
+<div class="my-3 flex justify-center">
+<i class="w-8 h-8 text-amber-200" data-lucide="music-2"></i>
+</div>
+<p class="text-xs font-serif leading-relaxed text-stone-100">
+                Sugiérenos una canción que no puede faltar en la fiesta
+              </p>
+</div>
+<button class="mt-4 px-4 py-1.5 bg-white/20 hover:bg-white text-white hover:text-kraft-dark rounded-full text-[11px] uppercase tracking-wider font-semibold border border-white/30 transition-all" onclick="openModal('music-modal')">
+              Sugerir
+            </button>
+</div>
+<!-- Capsule 2: Photos Upload -->
+<div class="bg-[#9E6738] text-white rounded-[40px] p-5 text-center flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow">
+<div>
+<span class="text-xs uppercase tracking-widest font-serif font-semibold text-stone-100">FOTOS</span>
+<div class="my-3 flex justify-center">
+<i class="w-8 h-8 text-amber-200" data-lucide="camera"></i>
+</div>
+<p class="text-xs font-serif leading-relaxed text-stone-100">
+                Nos encantaría ver nuestra boda a través de tus ojos
+              </p>
+</div>
+<button class="mt-4 px-4 py-1.5 bg-white/20 hover:bg-white text-white hover:text-kraft-dark rounded-full text-[11px] uppercase tracking-wider font-semibold border border-white/30 transition-all" onclick="openModal('photo-modal')">
+              Subir Fotos
+            </button>
+</div>
+</div>
+<!-- Protocol & Punctuality Notes Card -->
+<div class="card-border-ornate bg-white p-6 rounded-sm text-center shadow-sm">
+<span class="text-[11px] font-sans tracking-[0.2em] text-kraft-dark uppercase font-semibold">RECOMENDACIONES</span>
+<p class="font-serif text-xs text-stone-500 uppercase tracking-widest mt-1 mb-3">Invitación personal e intransferible</p>
+<div class="w-8 h-[1px] bg-stone-300 mx-auto mb-3"></div>
+<h4 class="font-serif text-sm tracking-wider uppercase text-charcoal font-semibold">PUNTUALIDAD</h4>
+<p class="font-serif italic text-stone-600 text-sm mt-1">
+            Tu presencia es muy importante para nosotros, por eso te invitamos a llegar a tiempo.
+          </p>
+</div>
+</div>
+</section>
+<!-- END: Guest Engagement -->
+<!-- BEGIN: RSVP Envelope Section -->
+<section class="py-12 px-6 bg-gradient-to-b from-transparent to-stone-200/50" data-purpose="rsvp-confirmation" id="rsvp-section">
+<div class="max-w-md mx-auto text-center">
+<!-- Interactive Envelope Opening Graphic -->
+<div class="relative bg-[#BA8252] rounded-b-xl shadow-2xl p-4 pt-12 overflow-visible border border-[#A66E40]">
+<!-- Back Flap -->
+<div class="absolute -top-10 left-0 right-0 h-20 bg-[#A66E40] envelope-shape transform rotate-180 -z-0"></div>
+<!-- Letter coming out of the envelope -->
+<div class="bg-white p-6 sm:p-8 rounded-sm shadow-md text-charcoal relative z-10 border border-stone-100">
+<h3 class="font-serif text-2xl tracking-widest uppercase text-charcoal font-medium">
+              CONFIRMAR ASISTENCIA
+            </h3>
+<p class="font-serif italic text-stone-600 text-sm sm:text-base mt-2 mb-6">
+              Haznos saber si podremos contar contigo en este día tan especial
+            </p>
+<!-- WhatsApp Direct Confirmation Buttons -->
+<div class="flex flex-col sm:flex-row gap-3 justify-center">
+<a class="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full border border-stone-800 text-charcoal hover:bg-charcoal hover:text-white transition-all text-xs font-serif uppercase tracking-widest font-semibold" href="https://api.whatsapp.com/send?phone=573001438516&amp;text=%C2%A1Hola%20Fernando!%20Confirmo%20con%20mucha%20alegr%C3%ADa%20mi%20asistencia%20a%20su%20boda%20el%2022%20de%20Octubre%20de%202026." rel="noopener noreferrer" target="_blank">
+<span>Confirmar con Novio</span>
+</a>
+<a class="inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-full bg-kraft text-white hover:bg-kraft-dark transition-all text-xs font-serif uppercase tracking-widest font-semibold shadow-sm" href="https://api.whatsapp.com/send?phone=573001438516&amp;text=%C2%A1Hola%20Liliana!%20Confirmo%20con%20mucha%20alegr%C3%ADa%20mi%20asistencia%20a%20su%20boda%20el%2022%20de%20Octubre%20de%202026." rel="noopener noreferrer" target="_blank">
+<span>Confirmar con Novia</span>
+</a>
+</div>
+<!-- Alternative In-Page Form RSVP Trigger -->
+<button class="mt-4 text-stone-500 hover:text-stone-800 text-xs font-serif underline tracking-wide" onclick="openModal('rsvp-form-modal')">
+              ¿Prefieres completar el formulario web? Haz clic aquí
+            </button>
+</div>
+<!-- Wax Seal on Envelope Front -->
+<div class="w-10 h-10 rounded-full wax-seal mx-auto -mb-5 relative z-20 flex items-center justify-center wax-seal-border shadow-md">
+<span class="text-amber-100 font-script text-lg">FL</span>
+</div>
+</div>
+<!-- Closing Warm Script Note -->
+<div class="mt-12 mb-6">
+<p class="font-script text-5xl text-kraft-dark">¡No faltes!</p>
+<p class="font-serif text-xs uppercase tracking-[0.25em] text-stone-500 mt-2">Esperamos celebrar contigo</p>
+</div>
+</div>
+</section>
+<!-- END: RSVP Section -->
+<!-- BEGIN: Footer -->
+<footer class="py-6 px-4 bg-stone-900 text-stone-400 text-center text-xs font-serif tracking-wider border-t border-stone-800">
+<p class="text-stone-300">Fernando &amp; Liliana • 22 de Octubre, 2026</p>
+<p class="text-[10px] text-stone-500 mt-1 uppercase tracking-widest">Con amor para toda la vida</p>
+</footer>
+<!-- END: Footer -->
+</main>
+<!-- END: MainContainer -->
+<!-- BEGIN: Modal - Sugerir Canción -->
+<dialog class="p-0 rounded-2xl shadow-2xl backdrop:bg-stone-900/60 w-11/12 max-w-sm border-0" id="music-modal">
+<div class="bg-[#FAF7F2] p-6 text-charcoal">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-serif text-xl font-semibold text-kraft-dark">Sugerir Canción</h3>
+<button class="text-stone-400 hover:text-stone-700" onclick="closeModal('music-modal')">
+<i class="w-5 h-5" data-lucide="x"></i>
+</button>
+</div>
+<p class="text-xs font-serif text-stone-600 mb-4">
+        ¿Qué canción te gustaría bailar con nosotros en la fiesta?
+      </p>
+<form class="space-y-3" id="song-form" onsubmit="handleSongSubmit(event)">
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">Nombre de la Canción</label>
+<input class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3" placeholder="Ej: Stand By Me" required="" type="text"/>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">Artista / Orquesta</label>
+<input class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3" placeholder="Ej: Ben E. King" required="" type="text"/>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">Tu Nombre</label>
+<input class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3" placeholder="Tu nombre" required="" type="text"/>
+</div>
+<button class="w-full py-2.5 mt-2 bg-kraft text-white rounded-lg text-xs font-serif uppercase tracking-widest font-semibold hover:bg-kraft-dark transition-colors" type="submit">
+          Enviar Canción
+        </button>
+</form>
+</div>
+</dialog>
+<!-- END: Modal - Sugerir Canción -->
+<!-- BEGIN: Modal - Subir Fotos -->
+<dialog class="p-0 rounded-2xl shadow-2xl backdrop:bg-stone-900/60 w-11/12 max-w-sm border-0" id="photo-modal">
+<div class="bg-[#FAF7F2] p-6 text-charcoal">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-serif text-xl font-semibold text-kraft-dark">Captura el Amor</h3>
+<button class="text-stone-400 hover:text-stone-700" onclick="closeModal('photo-modal')">
+<i class="w-5 h-5" data-lucide="x"></i>
+</button>
+</div>
+<p class="text-xs font-serif text-stone-600 mb-4">
+        Sube tus fotos tomadas durante la ceremonia y la fiesta para guardarlas en el álbum de los novios.
+      </p>
+<div class="border-2 border-dashed border-stone-300 rounded-xl p-6 text-center bg-white">
+<i class="w-10 h-10 mx-auto text-kraft mb-2" data-lucide="upload-cloud"></i>
+<p class="text-xs text-stone-700 font-medium">Arrastra tus fotos o toca para seleccionarlas</p>
+<p class="text-[10px] text-stone-400 mt-1">PNG, JPG hasta 25MB</p>
+<input accept="image/*" class="hidden" id="photo-file-input" multiple="" onchange="handlePhotoSelect(event)" type="file"/>
+<button class="mt-3 px-4 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs rounded-full font-serif font-semibold transition-colors" onclick="document.getElementById('photo-file-input').click()" type="button">
+          Seleccionar archivos
+        </button>
+</div>
+<p class="text-xs text-green-700 text-center mt-3 hidden font-medium" id="photo-status">¡Fotos listas para el álbum! Gracias.</p>
+</div>
+</dialog>
+<!-- END: Modal - Subir Fotos -->
+<!-- BEGIN: Modal - Formulario RSVP Web -->
+<dialog class="p-0 rounded-2xl shadow-2xl backdrop:bg-stone-900/60 w-11/12 max-w-md border-0" id="rsvp-form-modal">
+<div class="bg-[#FAF7F2] p-6 text-charcoal">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-serif text-xl font-semibold text-kraft-dark">Confirmación de Asistencia</h3>
+<button class="text-stone-400 hover:text-stone-700" onclick="closeModal('rsvp-form-modal')">
+<i class="w-5 h-5" data-lucide="x"></i>
+</button>
+</div>
+<form class="space-y-3" onsubmit="handleRSVPSubmit(event)">
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">Nombre Completo</label>
+<input class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3" placeholder="Tu nombre y apellido" required="" type="text"/>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">¿Asistirás?</label>
+<select class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3 font-serif" required="">
+<option value="si">¡Sí, con mucho gusto asistiré!</option>
+<option value="no">Lamentablemente no podré asistir</option>
+</select>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">Número de Pases Confirmados</label>
+<input class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3" max="5" min="1" type="number" value="1"/>
+</div>
+<div>
+<label class="block text-[11px] uppercase tracking-wider text-stone-600 font-medium mb-1">Restricciones Alimentarias (Opcional)</label>
+<input class="w-full text-sm rounded-lg border-stone-300 focus:border-kraft focus:ring-kraft bg-white py-2 px-3" placeholder="Ej: Vegetariano, alergia a mariscos..." type="text"/>
+</div>
+<button class="w-full py-2.5 mt-2 bg-kraft text-white rounded-lg text-xs font-serif uppercase tracking-widest font-semibold hover:bg-kraft-dark transition-colors" type="submit">
+          Enviar Confirmación
+        </button>
+</form>
+</div>
+</dialog>
+<!-- END: Modal - Formulario RSVP Web -->
+<!-- BEGIN: Interactive Logic Scripts -->
+<script data-purpose="audio-controls">
+    // Lucide Icons Initialization
+    lucide.createIcons();
+
+    // Audio Playback Simulation & Real Audio Handling
+    const audio = document.getElementById('wedding-audio');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const progressBar = document.getElementById('audio-progress');
+
+    let isPlaying = false;
+    let simulatedProgress = 32;
+
+    playPauseBtn.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        audio.play().catch(() => {});
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+      } else {
+        audio.pause();
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+      }
+    });
+
+    function restartAudio() {
+      audio.currentTime = 0;
+      if (!isPlaying) {
+        playPauseBtn.click();
+      }
+    }
+
+    function toggleLoop() {
+      audio.loop = !audio.loop;
+      alert(audio.loop ? 'Música en repetición' : 'Repetición desactivada');
+    }
+
+    // Update progress bar
+    setInterval(() => {
+      if (isPlaying) {
+        simulatedProgress += 0.5;
+        if (simulatedProgress > 100) simulatedProgress = 0;
+        progressBar.style.width = simulatedProgress + '%';
+      }
+    }, 500);
+  </script>
+<script data-purpose="countdown-logic">
+    // Wedding Date: October 22, 2026, 16:00:00 GMT-5 (Colombia)
+    const weddingDate = new Date('2026-10-22T16:00:00-05:00').getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = weddingDate - now;
+
+      if (distance < 0) {
+        document.getElementById('countdown-days').innerText = "00";
+        document.getElementById('countdown-hours').innerText = "00";
+        document.getElementById('countdown-minutes').innerText = "00";
+        document.getElementById('countdown-seconds').innerText = "00";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('countdown-days').innerText = String(days).padStart(2, '0');
+      document.getElementById('countdown-hours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('countdown-minutes').innerText = String(minutes).padStart(2, '0');
+      document.getElementById('countdown-seconds').innerText = String(seconds).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+<script data-purpose="modal-handlers">
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.showModal();
+        lucide.createIcons();
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.close();
+    }
+
+    function handleSongSubmit(event) {
+      event.preventDefault();
+      alert('¡Muchas gracias! Agregaremos esta canción a la lista de reproducción de la boda.');
+      closeModal('music-modal');
+      event.target.reset();
+    }
+
+    function handlePhotoSelect(event) {
+      if (event.target.files.length > 0) {
+        const status = document.getElementById('photo-status');
+        status.classList.remove('hidden');
+        setTimeout(() => {
+          closeModal('photo-modal');
+          status.classList.add('hidden');
+          event.target.value = '';
+        }, 1800);
+      }
+    }
+
+    function handleRSVPSubmit(event) {
+      event.preventDefault();
+      alert('¡Confirmación registrada con éxito! Fernando y Liliana esperan con ansias este día.');
+      closeModal('rsvp-form-modal');
+      event.target.reset();
+    }
+
+    function addToCalendarModal() {
+      const title = encodeURIComponent("Boda de Fernando & Liliana");
+      const details = encodeURIComponent("Celebración de la Boda de Fernando y Liliana en Bojacá. Ceremonia: Parroquia Nuestra Señora de la Salud (4:00 pm). Recepción: Finca Villa Luz (6:00 pm).");
+      const location = encodeURIComponent("Bojacá, Cundinamarca, Colombia");
+      const dates = "20261022T210000Z/20261023T080000Z";
+      
+      const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+      window.open(googleCalUrl, '_blank');
+    }
+  </script>
+<!-- END: Interactive Logic Scripts -->
+</body></html>
