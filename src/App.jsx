@@ -57,21 +57,12 @@ function App() {
         </section>
 
         <section className="px-6 py-10">
-          <div className="grid grid-cols-2 gap-4">
-            <a href="#rsvp-section" className="rounded-[2rem] bg-[var(--kraft)] p-5 text-center text-white shadow-md transition hover:-translate-y-1">
+          <div className="mx-auto grid max-w-xs grid-cols-1 gap-4">
+            <a href="#songs-section" className="rounded-[2rem] bg-[var(--kraft)] p-5 text-center text-white shadow-md transition hover:-translate-y-1">
               <span className="font-serif text-xs uppercase tracking-widest">Música</span>
               <span className="my-3 block text-3xl text-amber-200">♫</span>
               <span className="font-serif text-xs leading-relaxed">Sugiérenos una canción para la fiesta</span>
             </a>
-            <a href="#album" className="rounded-[2rem] bg-[#9e6738] p-5 text-center text-white shadow-md transition hover:-translate-y-1">
-              <span className="font-serif text-xs uppercase tracking-widest">Fotos</span>
-              <span className="my-3 block text-3xl text-amber-200">▧</span>
-              <span className="font-serif text-xs leading-relaxed">Comparte tus recuerdos con nosotros</span>
-            </a>
-          </div>
-          <div className="mt-6 border border-[#c4a480] bg-white p-6 text-center shadow-sm">
-            <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--kraft-dark)]">Recomendaciones</span>
-            <p className="mt-2 font-serif text-sm italic text-stone-600">Tu presencia es muy importante para nosotros, por eso te invitamos a llegar a tiempo.</p>
           </div>
         </section>
 

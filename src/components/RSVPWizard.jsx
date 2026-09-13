@@ -1,360 +1,169 @@
-import { useMemo, useState } from 'react'
+﻿import { useState } from 'react'
 
-const GOOGLE_SCRIPT_URL =
-  import.meta.env.VITE_GOOGLE_SCRIPT_URL ??
-  'https://script.google.com/macros/s/REEMPLAZAR_CON_TU_SCRIPT_ID/exec'
+const inputClass = 'w-full rounded-xl border border-[#d8c9b2] bg-white px-4 py-3 text-sm focus-visible:outline-2 focus-visible:outline-[#8e5630]'
+const buttonClass = 'min-h-11 rounded-full bg-[var(--kraft-dark)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--charcoal)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
+const emptySongs = () => Array.from({ length: 4 }, () => ({ title: '', artist: '' }))
 
-const GOOGLE_CALENDAR_URL =
-  'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+de+Gustavo+y+Laura&dates=20261205T210000Z/20261206T080000Z&details=Nos+encantar%C3%ADa+contar+contigo+el+5+de+diciembre+de+2026.&location=Por+confirmar'
-
-const guestCountByMode = {
-  Soltero: 1,
-  Pareja: 2,
-  Familia: 4,
+async function request(action, code, data = {}) {
+  const response = await fetch('/api/invitation', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, code, ...data }),
+    signal: AbortSignal.timeout(25000),
+  })
+  let result
+  try { result = await response.json() } catch { throw new Error('El servicio no está disponible. Inténtalo más tarde.') }
+  if (!response.ok) throw Object.assign(new Error(result.error || 'No pudimos guardar. Inténtalo de nuevo.'), { closed: result.closed })
+  if (!result.invitation) throw new Error('No pudimos confirmar el guardado. Inténtalo de nuevo.')
+  return result.invitation
 }
 
-const initialSongs = Array.from({ length: 4 }, () => ({ title: '', artist: '' }))
+function Feedback({ state }) {
+  return <p role={state.error ? 'alert' : 'status'} className={`text-sm ${state.error ? 'text-red-700' : 'text-[#6b5b45]'}`}>{state.message}</p>
+}
+
+function closeLabel(value) {
+  return new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Bogota' }).format(new Date(new Date(value).getTime() - 1))
+}
 
 function RSVPWizard() {
-  const [step, setStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState('')
-  const [formData, setFormData] = useState({
-    guestName: '',
-    mode: 'Soltero',
-    attendees: [{ name: '', attending: true }],
-    songs: initialSongs,
-  })
+  const [code, setCode] = useState('')
+  const [invitation, setInvitation] = useState(null)
+  const [attendees, setAttendees] = useState([])
+  const [songs, setSongs] = useState(emptySongs)
+  const [access, setAccess] = useState({ busy: false, message: '', error: false })
+  const [attendanceState, setAttendanceState] = useState({ busy: false, message: '', error: false })
+  const [songsState, setSongsState] = useState({ busy: false, message: '', error: false })
 
-  const progress = useMemo(() => (step / 4) * 100, [step])
-
-  const goToNextStep = () => setStep((current) => Math.min(4, current + 1))
-  const goToPreviousStep = () => setStep((current) => Math.max(1, current - 1))
-
-  const handleModeChange = (mode) => {
-    const totalGuests = guestCountByMode[mode]
-    setFormData((current) => {
-      const updatedAttendees = Array.from({ length: totalGuests }, (_, index) => {
-        const existing = current.attendees[index]
-        return (
-          existing ?? {
-            name: index === 0 ? current.guestName : '',
-            attending: true,
-          }
-        )
-      })
-
-      return {
-        ...current,
-        mode,
-        attendees: updatedAttendees,
-      }
-    })
-  }
-
-  const handleFirstStepSubmit = (event) => {
+  async function unlock(event) {
     event.preventDefault()
-    if (!formData.guestName.trim()) {
-      return
-    }
-
-    setFormData((current) => {
-      const attendees = [...current.attendees]
-      attendees[0] = {
-        ...(attendees[0] ?? { attending: true }),
-        name: current.guestName.trim(),
-      }
-      return { ...current, attendees }
-    })
-
-    goToNextStep()
-  }
-
-  const handleAttendeeChange = (index, key, value) => {
-    setFormData((current) => {
-      const attendees = current.attendees.map((attendee, attendeeIndex) =>
-        attendeeIndex === index ? { ...attendee, [key]: value } : attendee,
-      )
-
-      return { ...current, attendees }
-    })
-  }
-
-  const handleSongChange = (index, key, value) => {
-    setFormData((current) => {
-      const songs = current.songs.map((song, songIndex) =>
-        songIndex === index ? { ...song, [key]: value } : song,
-      )
-      return { ...current, songs }
-    })
-  }
-
-  const areSongsComplete = formData.songs.every(
-    (song) => song.title.trim() && song.artist.trim(),
-  )
-
-  const handleFinalSubmit = async () => {
-    if (!areSongsComplete) {
-      return
-    }
-
-    setIsSubmitting(true)
-    setSubmitError('')
-
-    const payload = {
-      guestName: formData.guestName.trim(),
-      mode: formData.mode,
-      attendees: formData.attendees.map((attendee) => ({
-        name: attendee.name.trim(),
-        attending: attendee.attending,
-      })),
-      songs: formData.songs.map((song, index) => ({
-        order: index + 1,
-        title: song.title.trim(),
-        artist: song.artist.trim(),
-      })),
-      submittedAt: new Date().toISOString(),
-    }
-
+    setAccess({ busy: true, message: '', error: false })
     try {
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
+      const result = await request('lookup', code.trim().toUpperCase())
+      setInvitation(result)
+      setAttendees(result.attendees)
+      setSongs(emptySongs().map((song, index) => result.songs[index] || song))
+      setAccess({ busy: false, message: '', error: false })
+    } catch (error) {
+      setAccess({ busy: false, message: error.message || 'No pudimos consultar tu invitación.', error: true })
+    }
+  }
 
-      if (!response.ok) {
-        throw new Error('Error al enviar RSVP')
-      }
-
-      goToNextStep()
-    } catch {
-      setSubmitError(
-        'No pudimos enviar tu confirmación en este momento. Inténtalo nuevamente.',
-      )
-    } finally {
-      setIsSubmitting(false)
+  async function save(event, action) {
+    event.preventDefault()
+    const setState = action === 'attendance' ? setAttendanceState : setSongsState
+    const selected = songs.filter(song => song.title.trim() || song.artist.trim())
+    if (action === 'attendance' && attendees.some(person => typeof person.attending !== 'boolean')) {
+      setState({ busy: false, error: true, message: 'Indica si asistirá cada integrante.' })
+      return
+    }
+    if (action === 'songs' && selected.some(song => !song.title.trim() || !song.artist.trim())) {
+      setState({ busy: false, error: true, message: 'Completa el título y artista de cada canción, o deja ambos campos vacíos.' })
+      return
+    }
+    setState({ busy: true, message: '', error: false })
+    try {
+      const data = action === 'attendance'
+        ? { attendees: attendees.map(({ id, attending }) => ({ id, attending })) }
+        : { songs: selected }
+      const result = await request(action, code.trim().toUpperCase(), data)
+      // Merge only the saved form: a concurrent response must not erase the other draft.
+      setInvitation(current => ({ ...current,
+        attendanceClosed: current.attendanceClosed || result.attendanceClosed,
+        songsClosed: current.songsClosed || result.songsClosed,
+        ...(action === 'attendance' ? { attendanceUpdatedAt: result.attendanceUpdatedAt } : { songsUpdatedAt: result.songsUpdatedAt }),
+      }))
+      if (action === 'songs') setSongs(emptySongs().map((song, index) => result.songs[index] || song))
+      setState({ busy: false, error: false, message: action === 'attendance' ? 'Tu respuesta de asistencia quedó guardada. Gracias por avisarnos.' : 'Tus sugerencias quedaron guardadas.' })
+    } catch (error) {
+      if (error.closed) setInvitation(current => ({ ...current, [error.closed === 'attendance' ? 'attendanceClosed' : 'songsClosed']: true }))
+      setState({ busy: false, error: true, message: error.message || 'No pudimos confirmar el guardado. Vuelve a intentarlo.' })
     }
   }
 
   return (
-    <div className="space-y-6">
-      <header className="space-y-2">
-        <h2 className="font-serif text-3xl text-[#4e3f2d]">Confirma tu asistencia</h2>
-        <p className="text-sm text-[#6b5b45] sm:text-base">
-          Completa este wizard en pocos pasos para confirmar y ayudarnos con la
-          playlist.
-        </p>
-      </header>
-
-      <div className="space-y-3">
-        <div className="h-2 w-full overflow-hidden rounded-full bg-[#e8dcc8]">
-          <div
-            className="h-full rounded-full bg-[#c5ab84] transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <p className="text-xs uppercase tracking-[0.2em] text-[#8c7553]">
-          Paso {step} de 4
-        </p>
-      </div>
-
-      {step === 1 && (
-        <form className="space-y-4 animate-fade-in" onSubmit={handleFirstStepSubmit}>
-          <div className="space-y-2">
-            <label htmlFor="guest-name" className="text-sm font-medium text-[#5a472f]">
-              Nombre del invitado o familia
-            </label>
-            <input
-              id="guest-name"
-              type="text"
-              value={formData.guestName}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, guestName: event.target.value }))
-              }
-              required
-              className="w-full rounded-xl border border-[#d8c9b2] bg-white px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ccb592]"
-              placeholder="Ej: Familia Pérez"
-            />
-          </div>
-
-          <fieldset className="space-y-2">
-            <legend className="text-sm font-medium text-[#5a472f]">Modalidad</legend>
-            <div className="grid gap-2 sm:grid-cols-3">
-              {Object.keys(guestCountByMode).map((mode) => (
-                <label
-                  key={mode}
-                  className="flex cursor-pointer items-center justify-between rounded-xl border border-[#d8c9b2] bg-white px-3 py-2 text-sm"
-                >
-                  <span>{mode}</span>
-                  <input
-                    type="radio"
-                    name="mode"
-                    checked={formData.mode === mode}
-                    onChange={() => handleModeChange(mode)}
-                  />
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <button
-            type="submit"
-            className="rounded-full bg-[#c5ab84] px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-[#b99d74]"
-          >
-            Siguiente
-          </button>
+    <div className="space-y-8 text-[#5a472f]">
+      {!invitation ? (
+        <form onSubmit={unlock} className="space-y-4" aria-busy={access.busy}>
+          <p className="text-sm">Ingresa el código de tu invitación para confirmar asistencia y sugerir hasta cuatro canciones para tu grupo.</p>
+          <label htmlFor="invitation-code" className="block text-sm font-medium">Código de invitación</label>
+          <input id="invitation-code" className={inputClass} value={code} onChange={event => setCode(event.target.value)} autoCapitalize="characters" autoComplete="off" spellCheck={false} maxLength={12} minLength={12} pattern="[A-Za-z0-9]{12}" required disabled={access.busy} aria-describedby="code-help" />
+          <p id="code-help" className="text-xs">Encontrarás el código de 12 caracteres en el mensaje de tu invitación.</p>
+          <button className={buttonClass} disabled={access.busy}>{access.busy ? 'Consultando…' : 'Ver mi invitación'}</button>
+          <Feedback state={access} />
         </form>
-      )}
-
-      {step === 2 && (
-        <section className="space-y-4 animate-fade-in">
-          {formData.attendees.map((attendee, index) => (
-            <div
-              key={`${index}-${attendee.name}`}
-              className="space-y-3 rounded-2xl border border-[#dcccb5] bg-[#fffdf9] p-4"
-            >
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-[#5a472f]" htmlFor={`attendee-${index}`}>
-                  Integrante {index + 1}
-                </label>
-                <input
-                  id={`attendee-${index}`}
-                  type="text"
-                  value={attendee.name}
-                  onChange={(event) =>
-                    handleAttendeeChange(index, 'name', event.target.value)
-                  }
-                  placeholder={index === 0 ? 'Invitado principal' : 'Nombre del acompañante'}
-                  className="w-full rounded-lg border border-[#d8c9b2] bg-white px-3 py-2 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ccb592]"
-                />
-              </div>
-
-              <label className="inline-flex items-center gap-3 text-sm text-[#5a472f]">
-                <input
-                  type="checkbox"
-                  checked={attendee.attending}
-                  onChange={(event) =>
-                    handleAttendeeChange(index, 'attending', event.target.checked)
-                  }
-                  className="h-4 w-4 accent-[#c5ab84]"
-                />
-                Confirmo asistencia
-              </label>
-            </div>
-          ))}
-
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={goToPreviousStep}
-              className="rounded-full border border-[#c5ab84] px-5 py-2 text-sm font-medium text-[#6b5b45] transition-all hover:bg-[#f5ead8]"
-            >
-              Volver
-            </button>
-            <button
-              type="button"
-              onClick={goToNextStep}
-              className="rounded-full bg-[#c5ab84] px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-[#b99d74]"
-            >
-              Siguiente
-            </button>
+      ) : (
+        <>
+          <div className="space-y-3 border-b border-[#e4d6bf] pb-4">
+            <p className="font-serif text-2xl">{invitation.group}</p>
+            <button type="button" disabled={attendanceState.busy || songsState.busy} className="text-sm underline underline-offset-4 disabled:opacity-50" onClick={() => {
+              setInvitation(null); setCode(''); setAttendees([]); setSongs(emptySongs())
+              setAttendanceState({ busy: false, message: '', error: false }); setSongsState({ busy: false, message: '', error: false })
+            }}>Cambiar invitación</button>
           </div>
-        </section>
+          <form onSubmit={event => save(event, 'attendance')} className="space-y-4" aria-busy={attendanceState.busy}>
+            <p className="text-sm">Indica quiénes podrán acompañarnos.</p>
+            <p className="text-xs">Disponible hasta: {closeLabel(invitation.attendanceClose)} (hora de Colombia).</p>
+            {invitation.attendanceClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para confirmar asistencia ha terminado. Puedes consultar tu respuesta.</p>}
+            <fieldset disabled={attendanceState.busy || invitation.attendanceClosed} className="space-y-4">
+              <legend className="sr-only">Asistencia de los integrantes</legend>
+              {attendees.map(person => (
+                <fieldset key={person.id} className="rounded-xl border border-[#dcccb5] p-4">
+                  <legend className="px-1 font-medium">{person.name}</legend>
+                  <div className="flex flex-wrap gap-x-5 gap-y-2">
+                    {[[true, 'Asistirá'], [false, 'No asistirá']].map(([value, label]) => (
+                      <label key={label} className="flex min-h-11 items-center gap-2 text-sm">
+                        <input type="radio" name={`attendance-${person.id}`} checked={person.attending === value} required onChange={() => {
+                          setAttendees(current => current.map(item => item.id === person.id ? { ...item, attending: value } : item))
+                          setAttendanceState({ busy: false, message: '', error: false })
+                        }} className="h-4 w-4 accent-[#8e5630]" />{label}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
+              <button className={buttonClass} disabled={attendanceState.busy || invitation.attendanceClosed}>{attendanceState.busy ? 'Guardando…' : 'Guardar asistencia'}</button>
+            </fieldset>
+            {invitation.attendanceUpdatedAt && <p className="text-xs">Ya tienes una respuesta guardada. {invitation.attendanceClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
+            <Feedback state={attendanceState} />
+          </form>
+        </>
       )}
 
-      {step === 3 && (
-        <section className="space-y-4 animate-fade-in">
-          <p className="rounded-xl bg-[#f5ead8] p-3 text-sm text-[#6b5b45]">
-            Modo DJ: completa obligatoriamente 4 canciones para la fiesta.
-          </p>
-
-          {formData.songs.map((song, index) => (
-            <div
-              key={`song-${index}`}
-              className="grid gap-3 rounded-2xl border border-[#dcccb5] bg-[#fffdf9] p-4 sm:grid-cols-2"
-            >
-              <input
-                type="text"
-                value={song.title}
-                onChange={(event) => handleSongChange(index, 'title', event.target.value)}
-                placeholder={`Canción ${index + 1}`}
-                className="w-full rounded-lg border border-[#d8c9b2] bg-white px-3 py-2 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ccb592]"
-                required
-              />
-              <input
-                type="text"
-                value={song.artist}
-                onChange={(event) => handleSongChange(index, 'artist', event.target.value)}
-                placeholder="Artista"
-                className="w-full rounded-lg border border-[#d8c9b2] bg-white px-3 py-2 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ccb592]"
-                required
-              />
-            </div>
-          ))}
-
-          {submitError && (
-            <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {submitError}
-            </p>
-          )}
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={goToPreviousStep}
-              disabled={isSubmitting}
-              className="rounded-full border border-[#c5ab84] px-5 py-2 text-sm font-medium text-[#6b5b45] transition-all hover:bg-[#f5ead8] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              Volver
-            </button>
-            <button
-              type="button"
-              onClick={handleFinalSubmit}
-              disabled={isSubmitting || !areSongsComplete}
-              className="rounded-full bg-[#c5ab84] px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-[#b99d74] disabled:cursor-not-allowed disabled:bg-[#d9c8ad]"
-            >
-              {isSubmitting ? 'Enviando...' : 'Confirmar RSVP'}
-            </button>
-          </div>
-        </section>
-      )}
-
-      {step === 4 && (
-        <section className="space-y-4 rounded-2xl border border-[#dcccb5] bg-[#fffdf9] p-5 text-center animate-fade-in">
-          <div className="animate-pop text-4xl">🎉</div>
-          <h3 className="font-serif text-2xl text-[#4e3f2d]">¡Gracias por confirmar!</h3>
-          <p className="text-sm text-[#6b5b45]">
-            Te esperamos con mucha ilusión. Este es el resumen de tu RSVP:
-          </p>
-
-          <dl className="space-y-2 rounded-xl bg-[#f9f2e7] p-4 text-left text-sm text-[#5a472f]">
-            <div className="flex justify-between gap-3">
-              <dt className="font-semibold">Invitado principal</dt>
-              <dd>{formData.guestName}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="font-semibold">Modalidad</dt>
-              <dd>{formData.mode}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="font-semibold">Asistentes confirmados</dt>
-              <dd>{formData.attendees.filter((attendee) => attendee.attending).length}</dd>
-            </div>
-          </dl>
-
-          <a
-            href={GOOGLE_CALENDAR_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex rounded-full bg-[#c5ab84] px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-[#b99d74]"
-          >
-            Agendar en Google Calendar
-          </a>
-        </section>
-      )}
+      <section id="songs-section" className="scroll-mt-6 space-y-4 border-t border-[#e4d6bf] pt-8" aria-labelledby="songs-heading">
+        <h2 id="songs-heading" className="font-serif text-3xl">Sugerir canciones</h2>
+        <p className="text-sm">Elige hasta cuatro canciones para tu invitación. Puedes agregarlas ahora o volver después; no son necesarias para confirmar asistencia.</p>
+        {!invitation ? <a href="#invitation-code" className="inline-block py-3 text-sm underline underline-offset-4">Ingresa tu código arriba para sugerir canciones</a> : (
+          <form onSubmit={event => save(event, 'songs')} className="space-y-4" aria-busy={songsState.busy}>
+            <p className="text-xs">Disponible hasta: {closeLabel(invitation.songsClose)} (hora de Colombia).</p>
+            {invitation.songsClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para sugerir canciones ha terminado. Puedes consultar tu selección.</p>}
+            <fieldset disabled={songsState.busy || invitation.songsClosed} className="space-y-4">
+              <legend className="sr-only">Hasta cuatro canciones</legend>
+              {songs.map((song, index) => (
+                <fieldset key={index} className="space-y-3 rounded-xl border border-[#dcccb5] p-4">
+                  <legend className="px-1 text-sm font-medium">Canción {index + 1}</legend>
+                  {['title', 'artist'].map(key => (
+                    <div key={key} className="space-y-1">
+                      <label htmlFor={`song-${index}-${key}`} className="block text-sm">{key === 'title' ? 'Título' : 'Artista'}</label>
+                      <input id={`song-${index}-${key}`} className={inputClass} value={song[key]} maxLength={150} onChange={event => {
+                        setSongs(current => current.map((item, i) => i === index ? { ...item, [key]: event.target.value } : item))
+                        setSongsState({ busy: false, message: '', error: false })
+                      }} />
+                    </div>
+                  ))}
+                  <button type="button" className="min-h-11 text-sm underline underline-offset-4" onClick={() => {
+                    setSongs(current => current.map((item, i) => i === index ? { title: '', artist: '' } : item))
+                    setSongsState({ busy: false, message: '', error: false })
+                  }}>Quitar canción {index + 1}</button>
+                </fieldset>
+              ))}
+              <button className={buttonClass} disabled={songsState.busy || invitation.songsClosed}>{songsState.busy ? 'Guardando…' : 'Guardar canciones'}</button>
+            </fieldset>
+            {invitation.songsUpdatedAt && <p className="text-xs">Ya tienes una selección guardada. {invitation.songsClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
+            <Feedback state={songsState} />
+          </form>
+        )}
+      </section>
     </div>
   )
 }
