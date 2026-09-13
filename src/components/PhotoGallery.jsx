@@ -1,4 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+
+function isSafeBlobUrl(value) {
+  try {
+    const parsed = new URL(value)
+    return parsed.protocol === 'blob:'
+  } catch {
+    return false
+  }
+}
+
+function getSafePreviewStyle(url) {
+  if (!isSafeBlobUrl(url)) {
+    return undefined
+  }
+
+  const escapedUrl = url.replaceAll('"', '%22')
+  return { backgroundImage: `url("${escapedUrl}")` }
+}
 
 function PhotoGallery() {
   const [selectedFiles, setSelectedFiles] = useState([])
@@ -8,8 +26,17 @@ function PhotoGallery() {
     [selectedFiles],
   )
 
+  useEffect(
+    () => () => {
+      previews.forEach(({ url }) => URL.revokeObjectURL(url))
+    },
+    [previews],
+  )
+
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files ?? [])
+    const files = Array.from(event.target.files ?? []).filter((file) =>
+      file.type.startsWith('image/'),
+    )
     setSelectedFiles(files)
   }
 
@@ -58,11 +85,11 @@ function PhotoGallery() {
               key={`${file.name}-${file.lastModified}`}
               className="overflow-hidden rounded-xl border border-[#dcccb5] bg-white"
             >
-              <img
-                src={url}
-                alt={file.name}
-                className="h-48 w-full object-cover"
-                onLoad={() => URL.revokeObjectURL(url)}
+              <div
+                role="img"
+                aria-label={file.name}
+                className="h-48 w-full bg-cover bg-center"
+                style={getSafePreviewStyle(url)}
               />
               <p className="truncate p-3 text-xs text-[#6b5b45]">{file.name}</p>
             </article>
