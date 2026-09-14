@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import RevealImage from './RevealImage'
 
-const weddingDate = new Date('2026-12-05T16:00:00-05:00').getTime()
+const weddingDate = new Date('2026-12-05T17:00:00-05:00').getTime()
 
 function getTimeLeft() {
   const distance = Math.max(0, weddingDate - Date.now())

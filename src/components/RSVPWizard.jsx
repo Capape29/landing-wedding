@@ -130,8 +130,13 @@ function RSVPWizard() {
         </>
       )}
 
-      <section id="songs-section" className="scroll-mt-6 space-y-4 border-t border-[#e4d6bf] pt-8" aria-labelledby="songs-heading">
-        <h2 id="songs-heading" className="font-serif text-3xl">Sugerir canciones</h2>
+      <section id="songs-section" className="scroll-mt-6 border-t border-[#e4d6bf] pt-8" aria-labelledby="songs-heading">
+        <div className="space-y-4">
+        <div className="flex items-center justify-center gap-3">
+          <h2 id="songs-heading" className="min-w-0 text-center font-script text-4xl leading-tight text-[var(--gold)] sm:text-5xl">¡DJ, pon mi canción!</h2>
+          <img src="/images/disco%20de%20vinilo.svg" alt="" className="h-12 w-12 shrink-0 object-contain sm:h-14 sm:w-14" />
+        </div>
+        <p className="font-serif text-lg leading-relaxed">La pista de baile nos espera y queremos saber cuál es esa canción que no puede faltar.</p>
         <p className="text-sm">{invitation
           ? 'Elige hasta cuatro canciones para tu invitación. Puedes agregarlas ahora o volver después; no son necesarias para confirmar asistencia.'
           : 'Ingresa el código de tu invitación para sugerir hasta cuatro canciones. No necesitas confirmar asistencia para hacerlo.'}</p>
@@ -173,6 +178,7 @@ function RSVPWizard() {
             <Feedback state={songsState} />
           </form>
         )}
+        </div>
       </section>
     </div>
   )

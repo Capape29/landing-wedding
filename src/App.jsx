@@ -52,7 +52,7 @@ function App() {
 
         <GiftSection />
 
-        <section id="album" className="bg-[#f8f4ee] px-6 py-8">
+        <section id="album" className="px-6 py-8">
           <PhotoGallery />
         </section>
 

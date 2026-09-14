@@ -5,11 +5,17 @@ function PhotoGallery() {
   const buttonClassName = 'inline-flex min-h-11 items-center justify-center rounded-full bg-[#c5ab84] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b99d74] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
 
   return (
-    <div className="space-y-6 text-center">
+    <div className="grid grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-2 sm:grid-cols-[3rem_minmax(0,1fr)_3rem] sm:gap-4">
+      <img src="/images/camara.svg" alt="" className="h-auto w-full -rotate-12 sepia saturate-50" />
+      <div className="min-w-0 space-y-6 text-center">
       <div className="space-y-2">
         <h2 className="font-serif text-3xl text-[#4e3f2d]">Álbum colaborativo</h2>
         <p className="text-sm text-[#6b5b45] sm:text-base">
-          Comparte los momentos que capturaste y disfruta los recuerdos de nuestra celebración.
+          Tu mirada, nuestro recuerdo. 
+        </p>
+        <p className="text-sm text-[#6b5b45] sm:text-base">Sube tus mejores fotos y videos de nuestra boda.
+        </p> 
+        <p className="text-sm text-[#6b5b45] sm:text-base">¡Queremos revivir este día desde tus ojos!
         </p>
       </div>
 
@@ -43,6 +49,8 @@ function PhotoGallery() {
           Se abrirá Google Photos. Inicia sesión con tu cuenta de Google para añadir tus fotos.
         </p>
       </div>
+      </div>
+      <img src="/images/camara.svg" alt="" className="h-auto w-full -scale-x-100 rotate-12 sepia saturate-50" />
     </div>
   )
 }
