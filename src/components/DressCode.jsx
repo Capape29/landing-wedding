@@ -5,7 +5,6 @@ function DressCode() {
     <section className="relative overflow-hidden bg-stone-50 px-6 py-10 text-center">
       <div className="relative z-10">
         <h2 className="font-script text-5xl text-[var(--gold)]">Dress code</h2>
-        <p className="mb-6 font-serif text-xs uppercase tracking-[0.2em] text-stone-500">Rigurosa etiqueta</p>
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl overflow-hidden rounded-[1.5rem] bg-[#f7f3ee]/5 p-6">
@@ -13,13 +12,6 @@ function DressCode() {
           as="div"
           aria-hidden="true"
           className="absolute inset-0"
-          style={{
-            backgroundImage: "url('/images/dresscode.webp')",
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            opacity: 0.3,
-          }}
         />
 
         <div className="relative z-10 grid gap-4 md:grid-cols-2">

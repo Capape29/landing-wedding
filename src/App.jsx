@@ -34,7 +34,7 @@ function App() {
 
         <section className="py-6" aria-label="Detalles de nuestra celebración">
           <RevealImage
-            src="/images/imagen2.webp"
+            src="/images/imagen7.webp"
             alt="Detalles de la celebración de la boda"
             className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
           />
@@ -44,7 +44,7 @@ function App() {
 
         <section aria-label="Momentos de nuestra historia" className="py-6">
           <RevealImage
-            src="/images/imagen4.webp"
+            src="/images/imagen6.webp"
             alt="Momento especial de la boda"
             className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
           />
