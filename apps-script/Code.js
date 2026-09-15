@@ -72,8 +72,8 @@ function generateCodes() {
   } finally { lock.releaseLock() }
 }
 
-function deadline(ss, key) {
-  const matches = rows(ss, 'Configuración').filter(row => row[0] === key)
+function deadline(ss, key, config = rows(ss, 'Configuración')) {
+  const matches = config.filter(row => row[0] === key)
   const value = matches[0]?.[1]
   const timestamp = value instanceof Date ? value.getTime() : Date.parse(value)
   if (matches.length !== 1 || !Number.isFinite(timestamp)) fail(503, 'No se ha configurado el cierre. Contacta a los organizadores.')
@@ -96,10 +96,10 @@ function rateLimit(clientKey, now) {
   props.setProperty(key, JSON.stringify(bucket))
 }
 
-function invitationData(ss, invitation, members, response, now) {
+function invitationData(ss, invitation, members, response, now, config = rows(ss, 'Configuración')) {
   const answers = response[1] ? JSON.parse(response[1]) : []
-  const attendanceClose = deadline(ss, 'attendanceClose')
-  const songsClose = deadline(ss, 'songsClose')
+  const attendanceClose = deadline(ss, 'attendanceClose', config)
+  const songsClose = deadline(ss, 'songsClose', config)
   const songs = []
   for (let i = 3; i <= 9; i += 2) {
     if (response[i] || response[i + 1]) songs.push({ title: String(response[i] || ''), artist: String(response[i + 1] || '') })
@@ -115,11 +115,14 @@ function invitationData(ss, invitation, members, response, now) {
 
 function processRequest(ss, payload, now) {
   if (!['lookup', 'attendance', 'songs'].includes(payload.action) || !/^[A-Z0-9]{12}$/.test(payload.code || '')) fail(400, 'Revisa el código de invitación.')
-  const matches = rows(ss, 'Invitaciones').filter(row => String(row[2]).trim().toUpperCase() === payload.code)
+  const invitations = rows(ss, 'Invitaciones')
+  const allMembers = rows(ss, 'Integrantes')
+  const config = rows(ss, 'Configuración')
+  const matches = invitations.filter(row => String(row[2]).trim().toUpperCase() === payload.code)
   if (matches.length !== 1) fail(401, 'No encontramos esa invitación. Revisa tu código.')
   const invitation = matches[0]
-  if (rows(ss, 'Invitaciones').filter(row => String(row[0]) === String(invitation[0])).length !== 1) fail(503, 'Contacta a los organizadores para revisar tu invitación.')
-  const members = rows(ss, 'Integrantes').filter(row => String(row[1]) === String(invitation[0]))
+  if (invitations.filter(row => String(row[0]) === String(invitation[0])).length !== 1) fail(503, 'Contacta a los organizadores para revisar tu invitación.')
+  const members = allMembers.filter(row => String(row[1]) === String(invitation[0]))
   if (!members.length || new Set(members.map(row => String(row[0]))).size !== members.length) fail(503, 'Contacta a los organizadores para revisar los integrantes.')
   const sheet = ss.getSheetByName('Respuestas')
   const data = sheet.getDataRange().getValues()
@@ -127,7 +130,7 @@ function processRequest(ss, payload, now) {
   if (indexes.length > 1) fail(503, 'Contacta a los organizadores para revisar tus respuestas.')
   const index = indexes[0] ?? -1
   const response = index < 0 ? [String(invitation[0]), ...Array(11).fill('')] : data[index].slice()
-  const view = invitationData(ss, invitation, members, response, now)
+  const view = invitationData(ss, invitation, members, response, now, config)
   if (payload.action === 'lookup') return view
   if (payload.action === 'attendance') {
     if (view.attendanceClosed) fail(409, 'El plazo para confirmar asistencia ha terminado.', { closed: 'attendance' })
@@ -145,16 +148,17 @@ function processRequest(ss, payload, now) {
     response[11] = new Date(now).toISOString()
   }
   writeRow(sheet, index < 0 ? sheet.getLastRow() + 1 : index + 1, response)
+  if (index < 0) data.push(response)
+  else data[index] = response
+  rebuildViews(ss, { invitations, members: allMembers, responses: data.slice(1).filter(row => row[0] !== '') }, payload.action)
   SpreadsheetApp.flush()
-  rebuildViews(ss)
-  SpreadsheetApp.flush()
-  return invitationData(ss, invitation, members, response, now)
+  return invitationData(ss, invitation, members, response, now, config)
 }
 
-function rebuildViews(ss) {
-  const invitations = rows(ss, 'Invitaciones')
-  const responses = rows(ss, 'Respuestas')
-  const attendance = rows(ss, 'Integrantes').map(member => {
+function rebuildViews(ss, snapshot, action) {
+  const invitations = snapshot ? snapshot.invitations : rows(ss, 'Invitaciones')
+  const responses = snapshot ? snapshot.responses : rows(ss, 'Respuestas')
+  const attendance = (action === 'songs' ? [] : snapshot ? snapshot.members : rows(ss, 'Integrantes')).map(member => {
     const group = invitations.find(row => String(row[0]) === String(member[1]))
     const response = responses.find(row => String(row[0]) === String(member[1]))
     const answers = response?.[1] ? JSON.parse(response[1]) : []
@@ -167,13 +171,17 @@ function rebuildViews(ss) {
     for (let i = 3; i <= 9; i += 2) if (response[i]) dj.push([group?.[1] || response[0], response[i], response[i + 1]])
   })
   ;[['Control de asistencia', attendance], ['Lista para el DJ', dj]].forEach(([name, data]) => {
+    if (action === 'songs' && name === 'Control de asistencia') return
+    if (action === 'attendance' && name === 'Lista para el DJ') return
     const sheet = ss.getSheetByName(name)
-    sheet.clearContents()
-    writeRow(sheet, 1, TABLES[name])
-    if (data.length) sheet.getRange(2, 1, data.length, TABLES[name].length).setValues(data.map(row => row.map(cell)))
+    const width = TABLES[name].length
+    const values = [TABLES[name], ...data]
+    const previousLength = sheet.getLastRow()
+    while (values.length < previousLength) values.push(Array(width).fill(''))
+    sheet.getRange(1, 1, values.length, width).setValues(values.map(row => row.map(cell)))
   })
   const totals = [['Estado', 'Total'], ...['Pendiente', 'Asistirá', 'No asistirá'].map(state => [state, attendance.filter(row => row[2] === state).length])]
-  ss.getSheetByName('Control de asistencia').getRange(1, 6, totals.length, 2).setValues(totals)
+  if (action !== 'songs') ss.getSheetByName('Control de asistencia').getRange(1, 6, totals.length, 2).setValues(totals)
 }
 
 // oxlint-disable-next-line no-unused-vars -- Apps Script editor entry point

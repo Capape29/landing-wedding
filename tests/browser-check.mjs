@@ -102,13 +102,15 @@ try {
   await evaluate("document.querySelectorAll('input[type=radio]')[0].click(); document.querySelectorAll('input[type=radio]')[3].click()")
   await click('Guardar asistencia')
   await until("document.body.textContent.includes('Tu respuesta de asistencia quedó guardada')")
+  assert.equal(await evaluate("document.body.textContent.includes('Respuesta de asistencia guardada')"), true)
+  assert.equal(await evaluate("Array.from(document.querySelectorAll('button')).find(button => button.textContent.includes('✓ Respuesta guardada')).disabled"), true)
   await fill('song-0-title', 'La canción de prueba')
   await click('Guardar canciones')
   await until("document.body.textContent.includes('Completa el título y artista')")
   await fill('song-0-artist', 'Artista de prueba')
   failure = true
   await click('Guardar canciones')
-  await until("document.body.textContent.includes('Error de conexión de prueba.')")
+  await until("document.body.textContent.includes('No pudimos verificar si se guardó.')")
   assert.equal(await evaluate("document.getElementById('song-0-title').value"), 'La canción de prueba')
   failure = false
   await click('Guardar canciones')
@@ -130,6 +132,8 @@ try {
   await until("document.body.textContent.includes('Tus sugerencias quedaron guardadas.')")
   assert.equal(invitation.songs.length, 0)
   closed = true
+  await evaluate("document.querySelectorAll('input[type=radio]')[1].click()")
+  await until("document.body.textContent.includes('Cambios sin guardar')")
   await click('Guardar asistencia')
   await until("document.body.textContent.includes('El plazo para confirmar asistencia ha terminado.')")
   assert.equal(await evaluate("document.querySelector('input[type=radio]').matches(':disabled')"), true)

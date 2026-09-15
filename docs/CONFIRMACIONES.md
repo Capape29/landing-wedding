@@ -10,7 +10,7 @@ La conexión de producción quedó verificada el 13 de septiembre de 2026. Se pr
 
 - Página: https://landing-wedding-phi.vercel.app
 - Apps Script de la cuenta propietaria: https://script.google.com/d/1lPr3mI13uUej73lP7jHeeL-k47z7cs4avSzK7krsrKrWaXHWP3EDh57i/edit
-- Implementación activa: `AKfycbyYqZFUba9I20SUjjSyrJHhD9QGRUp7B1ubTp6GCD8b22RsUlU-UcZQoZQUMlUJ6iLJfg`, versión 2, sin inicialización temporal.
+- Implementación activa: `AKfycbyYqZFUba9I20SUjjSyrJHhD9QGRUp7B1ubTp6GCD8b22RsUlU-UcZQoZQUMlUJ6iLJfg`, versión 3, con lecturas reutilizadas y actualización de la vista correspondiente a cada formulario.
 - `GOOGLE_SCRIPT_URL` y `GOOGLE_SCRIPT_SECRET` ya están configuradas en Vercel Production. No repetir la configuración inicial para el uso diario.
 - Margen de espera: 45 segundos hacia Google, 55 segundos en el formulario y 60 segundos de duración máxima de la función de Vercel.
 
@@ -88,6 +88,8 @@ Para una prueba local completa usa `vercel dev` con esas variables. `npm run dev
 Éxito: `{ invitation: {...} }`. Error: `{ error, closed? }`, con HTTP 400 (datos), 401 (código), 409 (cierre), 429 (límite), 502/503 (servicio). Todas las respuestas llevan `Cache-Control: no-store`. El código nunca viaja en la URL.
 
 ## Verificación y puesta en marcha
+
+La optimización de solicitudes en `apps-script/Code.js` reutiliza las lecturas de cada hoja durante una petición y reconstruye solo la vista del formulario guardado. Conserva el bloqueo y confirma el éxito después de completar las escrituras. Cambio activado el 14 de septiembre de 2026 en la versión 3 de la implementación existente, manteniendo su URL. La web se publicó en Vercel y se verificaron HTTP 200 y la validación de código inválido de la API; no se modificaron respuestas reales en esta comprobación. Publicar solo Vercel actualiza los indicadores visuales, pero no esta optimización del servidor. Medir los tiempos reales después del despliegue; el arranque y la red de Google Apps Script siguen influyendo.
 
 Pruebas locales:
 

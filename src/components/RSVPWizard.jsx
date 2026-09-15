@@ -1,25 +1,27 @@
-﻿import { useState } from 'react'
+import { request } from '../invitationRequest'
+import { useState } from 'react'
 
 const inputClass = 'w-full rounded-xl border border-[#d8c9b2] bg-white px-4 py-3 text-sm focus-visible:outline-2 focus-visible:outline-[#8e5630]'
 const buttonClass = 'min-h-11 rounded-full bg-[var(--kraft-dark)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--charcoal)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
 const emptySongs = () => Array.from({ length: 4 }, () => ({ title: '', artist: '' }))
 
-async function request(action, code, data = {}) {
-  const response = await fetch('/api/invitation', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, code, ...data }),
-    signal: AbortSignal.timeout(55000),
-  })
-  let result
-  try { result = await response.json() } catch { throw new Error('El servicio no está disponible. Inténtalo más tarde.') }
-  if (!response.ok) throw Object.assign(new Error(result.error || 'No pudimos guardar. Inténtalo de nuevo.'), { closed: result.closed })
-  if (!result.invitation) throw new Error('No pudimos confirmar el guardado. Inténtalo de nuevo.')
-  return result.invitation
+function Feedback({ state }) {
+  if (!state.busy && !state.message) return null
+  return <div role={state.error ? 'alert' : 'status'} className={`flex items-center gap-3 rounded-xl border-2 p-4 text-sm ${state.error ? 'border-red-200 bg-red-50 text-red-800' : state.busy ? 'border-[#dcccb5] bg-[#f7f3ee] text-[#5a472f]' : 'border-green-600 bg-green-50 text-green-900'}`}>
+    {state.busy && <span aria-hidden="true" className="h-5 w-5 shrink-0 rounded-full border-2 border-current border-r-transparent motion-safe:animate-spin" />}
+    {!state.busy && <span aria-hidden="true" className="text-3xl font-bold">{state.error ? '!' : '✓'}</span>}
+    <div>{!state.busy && <p className="text-lg font-bold">{state.error ? 'No se pudo completar' : '¡Listo! Guardado'}</p>}<p>{state.busy ? (state.message || 'Estamos procesando tu solicitud. Espera un momento…') : state.message}</p></div>
+  </div>
 }
 
-function Feedback({ state }) {
-  return <p role={state.error ? 'alert' : 'status'} className={`text-sm ${state.error ? 'text-red-700' : 'text-[#6b5b45]'}`}>{state.message}</p>
+function SavedStatus({ saved, dirty, busy, title, children }) {
+  return <div role="status" aria-live="polite" className={`flex items-start gap-3 rounded-2xl border-2 p-4 ${saved && !dirty ? 'border-green-600 bg-green-50 text-green-900' : 'border-amber-300 bg-amber-50 text-amber-900'}`}>
+    <span aria-hidden="true" className="text-3xl font-bold">{saved && !dirty ? '✓' : '!'}</span>
+    <div>
+      <p className="text-lg font-bold">{busy ? 'Guardando…' : dirty ? 'Cambios sin guardar' : saved ? title : 'Pendiente de guardar'}</p>
+      <p className="mt-1 text-sm">{busy ? 'Espera la confirmación antes de cerrar la página.' : dirty || !saved ? 'Pulsa el botón de guardar para enviar tu respuesta.' : children}</p>
+    </div>
+  </div>
 }
 
 function closeLabel(value) {
@@ -34,6 +36,8 @@ function RSVPWizard() {
   const [access, setAccess] = useState({ busy: false, message: '', error: false })
   const [attendanceState, setAttendanceState] = useState({ busy: false, message: '', error: false })
   const [songsState, setSongsState] = useState({ busy: false, message: '', error: false })
+  const attendanceDirty = !!invitation && JSON.stringify(attendees) !== JSON.stringify(invitation.attendees)
+  const songsDirty = !!invitation && JSON.stringify(songs.filter(song => song.title.trim() || song.artist.trim())) !== JSON.stringify(invitation.songs)
 
   async function unlock(event) {
     event.preventDefault()
@@ -66,14 +70,15 @@ function RSVPWizard() {
       const data = action === 'attendance'
         ? { attendees: attendees.map(({ id, attending }) => ({ id, attending })) }
         : { songs: selected }
-      const result = await request(action, code.trim().toUpperCase(), data)
+      const result = await request(action, code.trim().toUpperCase(), data, () => setState({ busy: true, error: false, message: 'Estamos comprobando si tus cambios quedaron guardados…' }))
       // Merge only the saved form: a concurrent response must not erase the other draft.
       setInvitation(current => ({ ...current,
         attendanceClosed: current.attendanceClosed || result.attendanceClosed,
         songsClosed: current.songsClosed || result.songsClosed,
-        ...(action === 'attendance' ? { attendanceUpdatedAt: result.attendanceUpdatedAt } : { songsUpdatedAt: result.songsUpdatedAt }),
+        ...(action === 'attendance' ? { attendanceUpdatedAt: result.attendanceUpdatedAt, attendees: result.attendees } : { songsUpdatedAt: result.songsUpdatedAt, songs: result.songs }),
       }))
       if (action === 'songs') setSongs(emptySongs().map((song, index) => result.songs[index] || song))
+      else setAttendees(result.attendees)
       setState({ busy: false, error: false, message: action === 'attendance' ? 'Tu respuesta de asistencia quedó guardada. Gracias por avisarnos.' : 'Tus sugerencias quedaron guardadas.' })
     } catch (error) {
       if (error.closed) setInvitation(current => ({ ...current, [error.closed === 'attendance' ? 'attendanceClosed' : 'songsClosed']: true }))
@@ -102,6 +107,9 @@ function RSVPWizard() {
             }}>Cambiar invitación</button>
           </div>
           <form onSubmit={event => save(event, 'attendance')} className="space-y-4" aria-busy={attendanceState.busy}>
+            <SavedStatus saved={invitation.attendanceUpdatedAt} dirty={attendanceDirty} busy={attendanceState.busy} title="Respuesta de asistencia guardada">
+              {invitation.attendees.filter(person => person.attending === true).length} asistirán · {invitation.attendees.filter(person => person.attending === false).length} no asistirán. Tu respuesta ya fue enviada.
+            </SavedStatus>
             <p className="text-sm">Indica quiénes podrán acompañarnos.</p>
             <p className="text-xs">Disponible hasta: {closeLabel(invitation.attendanceClose)} (hora de Colombia).</p>
             {invitation.attendanceClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para confirmar asistencia ha terminado. Puedes consultar tu respuesta.</p>}
@@ -122,7 +130,7 @@ function RSVPWizard() {
                   </div>
                 </fieldset>
               ))}
-              <button className={buttonClass} disabled={attendanceState.busy || invitation.attendanceClosed}>{attendanceState.busy ? 'Guardando…' : 'Guardar asistencia'}</button>
+              <button className={buttonClass} disabled={attendanceState.busy || invitation.attendanceClosed || (!!invitation.attendanceUpdatedAt && !attendanceDirty)}>{attendanceState.busy ? 'Guardando…' : invitation.attendanceUpdatedAt && !attendanceDirty ? '✓ Respuesta guardada' : 'Guardar asistencia'}</button>
             </fieldset>
             {invitation.attendanceUpdatedAt && <p className="text-xs">Ya tienes una respuesta guardada. {invitation.attendanceClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
             <Feedback state={attendanceState} />
@@ -150,6 +158,9 @@ function RSVPWizard() {
           </button>
         ) : (
           <form onSubmit={event => save(event, 'songs')} className="space-y-4" aria-busy={songsState.busy}>
+            <SavedStatus saved={invitation.songsUpdatedAt} dirty={songsDirty} busy={songsState.busy} title="Selección de canciones guardada">
+              {invitation.songs.length ? `${invitation.songs.length} canciones enviadas al DJ.` : 'Guardaste tu selección sin canciones.'}
+            </SavedStatus>
             <p className="text-xs">Disponible hasta: {closeLabel(invitation.songsClose)} (hora de Colombia).</p>
             {invitation.songsClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para sugerir canciones ha terminado. Puedes consultar tu selección.</p>}
             <fieldset disabled={songsState.busy || invitation.songsClosed} className="space-y-4">
@@ -172,7 +183,7 @@ function RSVPWizard() {
                   }}>Quitar canción {index + 1}</button>
                 </fieldset>
               ))}
-              <button className={buttonClass} disabled={songsState.busy || invitation.songsClosed}>{songsState.busy ? 'Guardando…' : 'Guardar canciones'}</button>
+              <button className={buttonClass} disabled={songsState.busy || invitation.songsClosed || (!!invitation.songsUpdatedAt && !songsDirty)}>{songsState.busy ? 'Guardando…' : invitation.songsUpdatedAt && !songsDirty ? '✓ Selección guardada' : 'Guardar canciones'}</button>
             </fieldset>
             {invitation.songsUpdatedAt && <p className="text-xs">Ya tienes una selección guardada. {invitation.songsClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
             <Feedback state={songsState} />

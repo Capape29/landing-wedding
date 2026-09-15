@@ -49,6 +49,22 @@ function fixture() {
 }
 const answers = values => ({ attendees: values.map((attending, index) => ({ id: `a${index + 1}`, attending })) })
 
+test('requests read each source sheet once and saves leave unrelated views untouched', () => {
+  for (const action of ['lookup', 'attendance', 'songs']) {
+    const f = fixture()
+    const reads = {}
+    for (const [name, sheet] of Object.entries(f.sheets)) {
+      const original = sheet.getDataRange.bind(sheet)
+      sheet.getDataRange = () => { reads[name] = (reads[name] || 0) + 1; return original() }
+    }
+    const untouched = action === 'attendance' ? 'Lista para el DJ' : 'Control de asistencia'
+    f.sheets[untouched].data = [['existing view']]
+    f.run(action, action === 'attendance' ? answers([true, false]) : { songs: [] })
+    for (const name of ['Invitaciones', 'Integrantes', 'Configuración', 'Respuestas']) assert.equal(reads[name], 1, `${action}: ${name}`)
+    assert.deepEqual(f.sheets[untouched].data, [['existing view']])
+  }
+})
+
 test('lookup isolates groups, starts pending, rejects unknown and duplicate codes', () => {
   const f = fixture()
   assert.deepEqual(JSON.parse(JSON.stringify(f.run('lookup').attendees)), [{ id: 'a1', name: 'Ana', attending: null }, { id: 'a2', name: 'Luis', attending: null }])
@@ -89,7 +105,7 @@ test('zero through four songs, edits and deletion preserve attendance', () => {
   assert.equal(f.run('lookup').songs.length, 4)
   f.run('songs', { songs: [] })
   assert.equal(f.run('lookup').songs.length, 0)
-  assert.equal(f.sheets['Lista para el DJ'].data.length, 1)
+  assert.equal(f.sheets['Lista para el DJ'].data.filter(row => row[0] !== '').length, 1)
   assert.equal(f.sheets.Respuestas.data.length, 2)
 })
 
