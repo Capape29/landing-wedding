@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { request } from '../src/invitationRequest.js'
 
 test('lost save response is reconciled without a second write, including edits and deletion', async t => {
-  for (const songs of [[{ title: 'Edited song', artist: 'Artist' }], []]) {
+  for (const songs of [[{ title: 'Edited song', artist: 'Artist' }], [{ title: '', artist: '', youtubeUrl: 'https://www.youtube.com/watch?v=abcdefghijk' }], []]) {
     const actions = []
     t.mock.method(globalThis, 'fetch', async (_url, options) => {
       const body = JSON.parse(options.body)

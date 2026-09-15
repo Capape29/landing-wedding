@@ -1,3 +1,4 @@
+import { sameSongs } from '../shared/songs.js'
 async function send(action, code, data = {}) {
   const response = await fetch('/api/invitation', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -16,7 +17,7 @@ export async function request(action, code, data = {}, onVerify = () => {}) {
     try {
       const stored = await send('lookup', code)
       const matches = action === 'songs'
-        ? stored.songsUpdatedAt && JSON.stringify(stored.songs) === JSON.stringify(data.songs.map(song => ({ title: song.title.trim(), artist: song.artist.trim() })))
+        ? stored.songsUpdatedAt && sameSongs(stored.songs, data.songs)
         : stored.attendanceUpdatedAt && stored.attendees.length === data.attendees.length && data.attendees.every(person => stored.attendees.some(saved => saved.id === person.id && saved.attending === person.attending))
       if (matches) return stored
     } catch { /* A failed verification cannot establish whether the write completed. */ }

@@ -2,9 +2,9 @@
 const TABLES = {
   Invitaciones: ['id', 'grupo', 'codigo'],
   Integrantes: ['id', 'invitacion_id', 'nombre'],
-  Respuestas: ['invitacion_id', 'asistencia_json', 'asistencia_actualizada', 'cancion_1', 'artista_1', 'cancion_2', 'artista_2', 'cancion_3', 'artista_3', 'cancion_4', 'artista_4', 'canciones_actualizadas'],
+  Respuestas: ['invitacion_id', 'asistencia_json', 'asistencia_actualizada', 'cancion_1', 'artista_1', 'cancion_2', 'artista_2', 'cancion_3', 'artista_3', 'cancion_4', 'artista_4', 'canciones_actualizadas', 'youtube_1', 'youtube_2', 'youtube_3', 'youtube_4'],
   'Control de asistencia': ['invitacion', 'integrante', 'estado', 'actualizada'],
-  'Lista para el DJ': ['invitacion', 'cancion', 'artista'],
+  'Lista para el DJ': ['invitacion', 'cancion', 'artista', 'youtube'],
   Configuración: ['clave', 'valor'],
 }
 
@@ -168,7 +168,7 @@ function rebuildViews(ss, snapshot, action) {
   const dj = []
   responses.forEach(response => {
     const group = invitations.find(row => String(row[0]) === String(response[0]))
-    for (let i = 3; i <= 9; i += 2) if (response[i]) dj.push([group?.[1] || response[0], response[i], response[i + 1]])
+    for (let i = 3; i <= 9; i += 2) if (response[i]) dj.push([group?.[1] || response[0], response[i], response[i + 1], response[12 + (i - 3) / 2] || ''])
   })
   ;[['Control de asistencia', attendance], ['Lista para el DJ', dj]].forEach(([name, data]) => {
     if (action === 'songs' && name === 'Control de asistencia') return
@@ -231,8 +231,9 @@ function mirrorDatabase(ss, snapshot) {
     invitations.push([row.id, row.group_name, row.code])
     row.members.forEach(member => { if (!member.id || !member.name) fail(400, 'Integrante inválido.'); members.push([member.id, row.id, member.name]) })
     const response = [row.id, JSON.stringify(row.attendance), row.attendance_updated_at || '']
-    for (let i = 0; i < 4; i++) response.push(row.songs[i]?.title || '', row.songs[i]?.artist || '')
+    for (let i = 0; i < 4; i++) response.push(row.songs[i]?.title || row.songs[i]?.youtube?.title || (row.songs[i]?.youtubeUrl ? 'Video de YouTube' : ''), row.songs[i]?.artist || '')
     response.push(row.songs_updated_at || '')
+    for (let i = 0; i < 4; i++) response.push(row.songs[i]?.youtubeUrl || '')
     responses.push(response)
   })
   const config = [['attendanceClose', snapshot.config.attendance_close], ['songsClose', snapshot.config.songs_close]]

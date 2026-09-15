@@ -58,6 +58,10 @@ test('database mirror is authenticated, ordered, idempotent and disables old wri
   assert.equal(send('wrong').status, 401)
   assert.equal(send('test-secret').version, '10')
   assert.equal(f.sheets.Respuestas.data[1][3], '=literal')
+  snapshot.invitations[0].songs[0].youtubeUrl = 'https://www.youtube.com/watch?v=abcdefghijk'
+  send('test-secret')
+  assert.equal(f.sheets.Respuestas.data[1][12], snapshot.invitations[0].songs[0].youtubeUrl)
+  assert.equal(f.sheets['Lista para el DJ'].data[1][3], snapshot.invitations[0].songs[0].youtubeUrl)
   assert.equal(f.sheets['Control de asistencia'].data[1][2], 'Asistirá')
   assert.equal(send('test-secret', { ...snapshot, version: '9', invitations: [] }).version, '10')
   assert.equal(f.sheets.Invitaciones.data[1][0], 'db-group')

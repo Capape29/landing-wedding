@@ -30,11 +30,13 @@ La revisión pendiente se conserva en `wedding_sync_state`. Una tarea diaria a l
 
 ## Configuración
 
+La búsqueda de canciones y sus límites se documentan en [YOUTUBE.md](YOUTUBE.md). Requiere `YOUTUBE_API_KEY` privada; pegar enlaces y guardar texto no depende de esa clave.
+
 - `DATABASE_URL`: conexión PostgreSQL solo del servidor.
 - `RSVP_STORAGE=postgres`: activa el backend nuevo.
 - `GOOGLE_SCRIPT_URL` y `GOOGLE_SCRIPT_SECRET`: solo para la copia de Sheets y el hash del límite de solicitudes.
 - `CRON_SECRET`: autentica la tarea de sincronización.
-- Apps Script: versión 5 de la misma implementación. No ejecutar de nuevo la configuración inicial ni generar códigos en Sheets.
+- Apps Script: versión 6 de la misma implementación, con enlaces de YouTube. No ejecutar de nuevo la configuración inicial ni generar códigos en Sheets.
 
 La API mantiene el límite de 60 solicitudes por origen cada 15 minutos, verifica los cierres en el servidor y bloquea únicamente la invitación afectada durante un guardado. Asistencia y canciones se actualizan por separado dentro de transacciones.
 

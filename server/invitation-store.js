@@ -1,4 +1,5 @@
 import { transaction } from './database.js'
+import { normalizeSongs } from '../shared/songs.js'
 
 function fail(status, message, closed) { throw Object.assign(new Error(message), { status, closed }) }
 function iso(value) { return value ? new Date(value).toISOString() : null }
@@ -41,8 +42,12 @@ export async function handleInvitation(pool, payload, clientKey) {
       await client.query('UPDATE wedding_invitations SET attendance=$2::jsonb,attendance_updated_at=$3 WHERE id=$1', [row.id, JSON.stringify(row.attendance), now])
     } else {
       if (view.songsClosed) fail(409, 'El plazo para sugerir canciones ha terminado.', 'songs')
-      if (!Array.isArray(payload.songs) || payload.songs.length > 4 || payload.songs.some(s => !s || typeof s.title !== 'string' || typeof s.artist !== 'string' || !s.title.trim() || !s.artist.trim() || s.title.length > 150 || s.artist.length > 150)) fail(400, 'Puedes guardar hasta cuatro canciones con título y artista (máximo 150 caracteres por campo).')
-      row.songs = payload.songs.map(s => ({ title: s.title.trim(), artist: s.artist.trim() }))
+      try { row.songs = normalizeSongs(payload.songs) } catch (error) { fail(400, error.message) }
+      for (const song of row.songs) {
+        if (!song.youtubeUrl) continue
+        const { rows: [metadata] } = await client.query("SELECT title,channel,fetched_at FROM wedding_youtube_metadata WHERE video_id=$1 AND fetched_at>now()-interval '29 days'", [new URL(song.youtubeUrl).searchParams.get('v')])
+        if (metadata) song.youtube = { title: metadata.title, channel: metadata.channel, fetchedAt: iso(metadata.fetched_at) }
+      }
       row.songs_updated_at = now
       await client.query('UPDATE wedding_invitations SET songs=$2::jsonb,songs_updated_at=$3 WHERE id=$1', [row.id, JSON.stringify(row.songs), now])
     }

@@ -1,3 +1,5 @@
+import SongCollection from './SongCollection'
+import { hasSong, normalizeSongs, sameSongs } from '../../shared/songs.js'
 import { request } from '../invitationRequest'
 import { useState } from 'react'
 
@@ -33,11 +35,12 @@ function RSVPWizard() {
   const [invitation, setInvitation] = useState(null)
   const [attendees, setAttendees] = useState([])
   const [songs, setSongs] = useState(emptySongs)
+  const [songDraft, setSongDraft] = useState(false)
   const [access, setAccess] = useState({ busy: false, message: '', error: false })
   const [attendanceState, setAttendanceState] = useState({ busy: false, message: '', error: false })
   const [songsState, setSongsState] = useState({ busy: false, message: '', error: false })
   const attendanceDirty = !!invitation && JSON.stringify(attendees) !== JSON.stringify(invitation.attendees)
-  const songsDirty = !!invitation && JSON.stringify(songs.filter(song => song.title.trim() || song.artist.trim())) !== JSON.stringify(invitation.songs)
+  const songsDirty = !!invitation && !sameSongs(songs.filter(hasSong), invitation.songs)
 
   async function unlock(event) {
     event.preventDefault()
@@ -45,6 +48,7 @@ function RSVPWizard() {
     try {
       const result = await request('lookup', code.trim().toUpperCase())
       setInvitation(result)
+      setSongDraft(false)
       setAttendees(result.attendees)
       setSongs(emptySongs().map((song, index) => result.songs[index] || song))
       setAccess({ busy: false, message: '', error: false })
@@ -56,14 +60,17 @@ function RSVPWizard() {
   async function save(event, action) {
     event.preventDefault()
     const setState = action === 'attendance' ? setAttendanceState : setSongsState
-    const selected = songs.filter(song => song.title.trim() || song.artist.trim())
+    const selected = songs.filter(hasSong)
+    if (action === 'songs' && songDraft) {
+      setState({ busy: false, error: true, message: 'Agrega la canción a la lista o termina el cambio antes de guardar.' })
+      return
+    }
     if (action === 'attendance' && attendees.some(person => typeof person.attending !== 'boolean')) {
       setState({ busy: false, error: true, message: 'Indica si asistirá cada integrante.' })
       return
     }
-    if (action === 'songs' && selected.some(song => !song.title.trim() || !song.artist.trim())) {
-      setState({ busy: false, error: true, message: 'Completa el título y artista de cada canción, o deja ambos campos vacíos.' })
-      return
+    if (action === 'songs') {
+      try { normalizeSongs(selected) } catch (error) { setState({ busy: false, error: true, message: error.message }); return }
     }
     setState({ busy: true, message: '', error: false })
     try {
@@ -102,7 +109,7 @@ function RSVPWizard() {
           <div className="space-y-3 border-b border-[#e4d6bf] pb-4">
             <p className="font-serif text-2xl">{invitation.group}</p>
             <button type="button" disabled={attendanceState.busy || songsState.busy} className="text-sm underline underline-offset-4 disabled:opacity-50" onClick={() => {
-              setInvitation(null); setCode(''); setAttendees([]); setSongs(emptySongs())
+              setInvitation(null); setCode(''); setAttendees([]); setSongs(emptySongs()); setSongDraft(false)
               setAttendanceState({ busy: false, message: '', error: false }); setSongsState({ busy: false, message: '', error: false })
             }}>Cambiar invitación</button>
           </div>
@@ -158,32 +165,18 @@ function RSVPWizard() {
           </button>
         ) : (
           <form onSubmit={event => save(event, 'songs')} className="space-y-4" aria-busy={songsState.busy}>
-            <SavedStatus saved={invitation.songsUpdatedAt} dirty={songsDirty} busy={songsState.busy} title="Selección de canciones guardada">
+            <SavedStatus saved={invitation.songsUpdatedAt} dirty={songsDirty || songDraft} busy={songsState.busy} title="Selección de canciones guardada">
               {invitation.songs.length ? `${invitation.songs.length} canciones enviadas al DJ.` : 'Guardaste tu selección sin canciones.'}
             </SavedStatus>
             <p className="text-xs">Disponible hasta: {closeLabel(invitation.songsClose)} (hora de Colombia).</p>
             {invitation.songsClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para sugerir canciones ha terminado. Puedes consultar tu selección.</p>}
             <fieldset disabled={songsState.busy || invitation.songsClosed} className="space-y-4">
               <legend className="sr-only">Hasta cuatro canciones</legend>
-              {songs.map((song, index) => (
-                <fieldset key={index} className="space-y-3 rounded-xl border border-[#dcccb5] p-4">
-                  <legend className="px-1 text-sm font-medium">Canción {index + 1}</legend>
-                  {['title', 'artist'].map(key => (
-                    <div key={key} className="space-y-1">
-                      <label htmlFor={`song-${index}-${key}`} className="block text-sm">{key === 'title' ? 'Título' : 'Artista'}</label>
-                      <input id={`song-${index}-${key}`} className={inputClass} value={song[key]} maxLength={150} onChange={event => {
-                        setSongs(current => current.map((item, i) => i === index ? { ...item, [key]: event.target.value } : item))
-                        setSongsState({ busy: false, message: '', error: false })
-                      }} />
-                    </div>
-                  ))}
-                  <button type="button" className="min-h-11 text-sm underline underline-offset-4" onClick={() => {
-                    setSongs(current => current.map((item, i) => i === index ? { title: '', artist: '' } : item))
-                    setSongsState({ busy: false, message: '', error: false })
-                  }}>Quitar canción {index + 1}</button>
-                </fieldset>
-              ))}
-              <button className={buttonClass} disabled={songsState.busy || invitation.songsClosed || (!!invitation.songsUpdatedAt && !songsDirty)}>{songsState.busy ? 'Guardando…' : invitation.songsUpdatedAt && !songsDirty ? '✓ Selección guardada' : 'Guardar canciones'}</button>
+              <SongCollection songs={songs.filter(hasSong)} dirty={songsDirty} onDraftChange={setSongDraft} code={code.trim().toUpperCase()} disabled={songsState.busy} closed={invitation.songsClosed} onChange={value => {
+                setSongs(value)
+                setSongsState({ busy: false, message: '', error: false })
+              }} />
+              <button className={buttonClass} disabled={songDraft || songsState.busy || invitation.songsClosed || (!!invitation.songsUpdatedAt && !songsDirty)}>{songsState.busy ? 'Guardando…' : invitation.songsUpdatedAt && !songsDirty && !songDraft ? '✓ Selección guardada' : 'Guardar canciones'}</button>
             </fieldset>
             {invitation.songsUpdatedAt && <p className="text-xs">Ya tienes una selección guardada. {invitation.songsClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
             <Feedback state={songsState} />

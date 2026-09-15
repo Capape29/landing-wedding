@@ -1,3 +1,4 @@
+import { songTitle } from '../../shared/songs.js'
 import { useEffect, useState } from 'react'
 
 async function request(body) {
@@ -71,7 +72,7 @@ export default function AdminPanel() {
           {visible.map(i => <article key={i.id} className="space-y-3 rounded-xl border border-stone-200 bg-white p-5">
             <h3 className="font-serif text-xl">{i.group_name}{!i.active && ' (inactiva)'}</h3><p>Código: <strong className="break-all">{i.code}</strong></p>
             <ul className="space-y-2">{i.members.map(m => { const answer = i.attendance.find(a => a.id === m.id)?.attending; return <li key={m.id} className="flex flex-wrap justify-between gap-2"><span>{m.name}</span><strong className={answer === true ? 'text-green-800' : answer === false ? 'text-red-800' : 'text-stone-500'}>{answer === true ? '✓ Asistirá' : answer === false ? 'No asistirá' : 'Pendiente'}</strong></li> })}</ul>
-            <p className="font-semibold">Canciones sugeridas</p>{i.songs.length ? <ul>{i.songs.map((s, index) => <li key={index}>{s.title} — {s.artist}</li>)}</ul> : <p className="text-stone-500">Sin canciones todavía.</p>}
+            <p className="font-semibold">Canciones sugeridas</p>{i.songs.length ? <ul>{i.songs.map((s, index) => <li key={index}>{songTitle(s)}{s.artist && ` — ${s.artist}`}{s.youtube?.channel && <span> · Canal: {s.youtube.channel}</span>}{s.youtubeUrl && <a className="ml-2 underline" href={s.youtubeUrl} target="_blank" rel="noopener noreferrer">Abrir en YouTube</a>}</li>)}</ul> : <p className="text-stone-500">Sin canciones todavía.</p>}
           </article>)}
         </section>
       </>}

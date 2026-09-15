@@ -1,5 +1,6 @@
 {
   "functions": {
+    "api/youtube-search.js": { "maxDuration": 20 },
     "api/admin.js": { "maxDuration": 60 },
     "api/invitation.js": {
       "maxDuration": 60

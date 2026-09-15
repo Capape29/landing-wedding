@@ -9,6 +9,7 @@ try {
   await client.connect()
   await client.query('BEGIN')
   await client.query(readFileSync(new URL('../db/schema.sql', import.meta.url), 'utf8'))
+  await client.query(readFileSync(new URL('../db/youtube.sql', import.meta.url), 'utf8'))
   await client.query('COMMIT')
   console.log('Schema applied')
 } catch (error) {

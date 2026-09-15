@@ -29,6 +29,24 @@ test('mirror lease releases on failure and newer changes remain pending after an
     assert.equal((await syncSheets(db)).synced, true)
     state = (await db.query('SELECT * FROM wedding_sync_state')).rows[0]
     assert.equal(state.version, state.synced_version)
+    await db.exec('UPDATE wedding_config SET catalog_updated_at=now()')
+    t.mock.restoreAll()
+    process.env.GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/test/exec'
+    const methods = []
+    let version
+    t.mock.method(globalThis, 'fetch', async (_url, options) => {
+      methods.push(options.method)
+      if (options.method === 'POST') {
+        version = JSON.parse(options.body).snapshot.version
+        assert.equal(options.redirect, 'manual')
+        return new Response(null, { status: 302, headers: { location: 'https://script.googleusercontent.com/test' } })
+      }
+      assert.equal(options.body, undefined)
+      return methods.length === 2 ? new Response(null, { status: 404 }) : Response.json({ ok: true, version })
+    })
+    assert.equal((await syncSheets(db)).synced, true)
+    assert.deepEqual(methods, ['POST', 'GET', 'GET'])
+    delete process.env.GOOGLE_SCRIPT_URL
     await db.exec(`UPDATE wedding_sync_state SET lease_token='another-worker',lease_until=now()+interval '90 seconds'`)
     assert.equal((await syncSheets(db)).busy, true)
   } finally { await db.close() }
