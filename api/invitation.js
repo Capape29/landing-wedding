@@ -1,6 +1,9 @@
 import { createHmac } from 'node:crypto'
 
 export default async function handler(req, res) {
+  const started = Date.now()
+  let phase = 'validation'
+  let upstreamStatus
   res.setHeader('Cache-Control', 'no-store')
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
@@ -17,12 +20,15 @@ export default async function handler(req, res) {
     // Vercel supplies this header. Do not use a client-supplied identifier.
     const ip = String(req.headers['x-vercel-forwarded-for'] || req.socket?.remoteAddress || 'local').split(',')[0].trim()
     const clientKey = createHmac('sha256', secret).update(ip).digest('hex')
+    phase = 'google_fetch'
     const upstream = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: body.action, code: body.code.trim().toUpperCase(), attendees: body.attendees, songs: body.songs, secret, clientKey }),
       signal: AbortSignal.timeout(45000),
     })
+    upstreamStatus = upstream.status
+    phase = 'google_response'
     if (!upstream.ok) throw new Error('upstream')
     const result = await upstream.json().catch(() => { throw new Error('Invalid upstream response') })
     if (result.ok === false) {
@@ -33,6 +39,9 @@ export default async function handler(req, res) {
     if (result.ok !== true || !result.invitation) throw new Error('invalid response')
     return res.status(200).json({ invitation: result.invitation })
   } catch (error) {
+    // Diagnostics only: never log URLs, secrets, codes, bodies, or raw error messages.
+    console.error(JSON.stringify({ event: 'invitation_request_failed', phase, elapsedMs: Date.now() - started, upstreamStatus,
+      errorType: error.name, networkCode: /^[A-Z_0-9]+$/.test(error.cause?.code || '') ? error.cause.code : undefined }))
     const badJson = error instanceof SyntaxError
     return res.status(badJson ? 400 : 502).json({ error: badJson ? 'No pudimos leer los datos enviados.' : 'No pudimos confirmar el guardado. Tus datos siguen en pantalla; vuelve a intentarlo.' })
   }
