@@ -198,13 +198,19 @@ function doPost(event) {
   let result
   try {
     const text = event?.postData?.contents || ''
-    if (text.length > 16000) fail(400, 'Solicitud demasiado grande.')
+    if (text.length > 512000) fail(400, 'Solicitud demasiado grande.')
     const payload = JSON.parse(text)
     const secret = PropertiesService.getScriptProperties().getProperty('API_SECRET')
     if (!secret || payload.secret !== secret) fail(401, 'Solicitud no autorizada.')
     lock = LockService.getScriptLock()
     acquired = lock.tryLock(8000)
     if (!acquired) fail(503, 'Estamos procesando otras respuestas. Inténtalo nuevamente.')
+    if (payload.action === 'mirrorDatabase') {
+      result = mirrorDatabase(book(), payload.snapshot)
+      return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON)
+    }
+    if (text.length > 16000) fail(400, 'Solicitud demasiado grande.')
+    if (PropertiesService.getScriptProperties().getProperty('DATABASE_MIRROR_VERSION')) fail(503, 'El sistema se actualizó. Recarga la invitación.')
     const now = Date.now()
     rateLimit(payload.clientKey, now)
     result = { ok: true, invitation: processRequest(book(), payload, now) }
@@ -212,4 +218,34 @@ function doPost(event) {
     result = { ok: false, status: error.status || 503, error: error.status ? error.message : 'No pudimos guardar tu respuesta. Inténtalo nuevamente.', closed: error.closed }
   } finally { if (acquired) lock.releaseLock() }
   return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON)
+}
+
+function mirrorDatabase(ss, snapshot) {
+  if (!snapshot || !/^\d{1,15}$/.test(String(snapshot.version)) || !Array.isArray(snapshot.invitations) || !snapshot.config) fail(400, 'Copia inválida.')
+  const props = PropertiesService.getScriptProperties()
+  const previous = Number(props.getProperty('DATABASE_MIRROR_VERSION') || -1)
+  if (Number(snapshot.version) < previous) return { ok: true, version: String(previous) }
+  const invitations = [], members = [], responses = []
+  snapshot.invitations.forEach(row => {
+    if (!row.id || !row.group_name || !row.code || !Array.isArray(row.members) || !Array.isArray(row.attendance) || !Array.isArray(row.songs) || row.songs.length > 4) fail(400, 'Copia inválida.')
+    invitations.push([row.id, row.group_name, row.code])
+    row.members.forEach(member => { if (!member.id || !member.name) fail(400, 'Integrante inválido.'); members.push([member.id, row.id, member.name]) })
+    const response = [row.id, JSON.stringify(row.attendance), row.attendance_updated_at || '']
+    for (let i = 0; i < 4; i++) response.push(row.songs[i]?.title || '', row.songs[i]?.artist || '')
+    response.push(row.songs_updated_at || '')
+    responses.push(response)
+  })
+  const config = [['attendanceClose', snapshot.config.attendance_close], ['songsClose', snapshot.config.songs_close]]
+  if (config.some(row => !Number.isFinite(Date.parse(row[1])))) fail(400, 'Cierre inválido.')
+  ;[['Invitaciones', invitations], ['Integrantes', members], ['Respuestas', responses], ['Configuración', config]].forEach(([name, data]) => {
+    const sheet = ss.getSheetByName(name)
+    const values = [TABLES[name], ...data]
+    const oldLength = sheet.getLastRow()
+    while (values.length < oldLength) values.push(Array(TABLES[name].length).fill(''))
+    sheet.getRange(1, 1, values.length, TABLES[name].length).setValues(values.map(row => row.map(cell)))
+  })
+  rebuildViews(ss, { invitations, members, responses })
+  SpreadsheetApp.flush()
+  props.setProperty('DATABASE_MIRROR_VERSION', String(snapshot.version))
+  return { ok: true, version: String(snapshot.version) }
 }

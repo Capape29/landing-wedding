@@ -49,6 +49,23 @@ function fixture() {
 }
 const answers = values => ({ attendees: values.map((attending, index) => ({ id: `a${index + 1}`, attending })) })
 
+test('database mirror is authenticated, ordered, idempotent and disables old writes', () => {
+  const f = fixture()
+  const snapshot = { version: '10', config: { attendance_close: '2026-11-06T05:00:00Z', songs_close: '2026-11-06T05:00:00Z' }, invitations: [{
+    id: 'db-group', group_name: 'Database group', code: 'ABCDEF123456', members: [{ id: 'db-person', name: 'Test' }], attendance: [{ id: 'db-person', attending: true }], songs: [{ title: '=literal', artist: 'Artist' }], attendance_updated_at: '2026-09-15T00:00:00Z', songs_updated_at: '2026-09-15T00:00:00Z',
+  }] }
+  const send = (secret, data = snapshot) => f.context.doPost({ postData: { contents: JSON.stringify({ action: 'mirrorDatabase', secret, snapshot: data }) } })
+  assert.equal(send('wrong').status, 401)
+  assert.equal(send('test-secret').version, '10')
+  assert.equal(f.sheets.Respuestas.data[1][3], '=literal')
+  assert.equal(f.sheets['Control de asistencia'].data[1][2], 'Asistirá')
+  assert.equal(send('test-secret', { ...snapshot, version: '9', invitations: [] }).version, '10')
+  assert.equal(f.sheets.Invitaciones.data[1][0], 'db-group')
+  assert.equal(send('test-secret').version, '10')
+  const old = f.context.doPost({ postData: { contents: JSON.stringify({ action: 'songs', secret: 'test-secret', clientKey: 'a'.repeat(64), code, songs: [] }) } })
+  assert.equal(old.status, 503)
+})
+
 test('requests read each source sheet once and saves leave unrelated views untouched', () => {
   for (const action of ['lookup', 'attendance', 'songs']) {
     const f = fixture()

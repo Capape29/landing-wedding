@@ -92,8 +92,8 @@ function RSVPWizard() {
         <form onSubmit={unlock} className="space-y-4" aria-busy={access.busy}>
           <p className="text-sm">Ingresa el código de tu invitación para confirmar asistencia y sugerir hasta cuatro canciones para tu grupo.</p>
           <label htmlFor="invitation-code" className="block text-sm font-medium">Código de invitación</label>
-          <input id="invitation-code" className={inputClass} value={code} onChange={event => setCode(event.target.value)} autoCapitalize="characters" autoComplete="off" spellCheck={false} maxLength={12} minLength={12} pattern="[A-Za-z0-9]{12}" required disabled={access.busy} aria-describedby="code-help" />
-          <p id="code-help" className="text-xs">Encontrarás el código de 12 caracteres en el mensaje de tu invitación.</p>
+          <input id="invitation-code" className={inputClass} value={code} onChange={event => setCode(event.target.value)} autoCapitalize="characters" autoComplete="off" spellCheck={false} maxLength={32} minLength={6} pattern="[A-Za-z0-9]{6,32}" required disabled={access.busy} aria-describedby="code-help" />
+          <p id="code-help" className="text-xs">Encontrarás tu código en el mensaje de la invitación.</p>
           <button className={buttonClass} disabled={access.busy}>{access.busy ? 'Consultando…' : 'Ver mi invitación'}</button>
           <Feedback state={access} />
         </form>

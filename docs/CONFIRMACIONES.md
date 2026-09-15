@@ -1,4 +1,6 @@
-# Activar asistencia y canciones
+# Configuración histórica con Apps Script
+
+**Desde el 15 de septiembre de 2026, producción usa PostgreSQL.** Consulta [la guía vigente](BASE-DE-DATOS.md). Sheets es una copia de consulta; no seguir los pasos de generación de códigos o edición de invitados de esta guía para administrar el sistema actual. Este documento se conserva como referencia de la instalación anterior.
 
 ## Hoja preparada
 

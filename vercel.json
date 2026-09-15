@@ -2,6 +2,10 @@
   "functions": {
     "api/invitation.js": {
       "maxDuration": 60
+    },
+    "api/sheets-sync.js": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [{ "path": "/api/sheets-sync", "schedule": "0 10 * * *" }]
 }
