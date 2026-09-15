@@ -15,9 +15,9 @@ function WeddingDetails() {
         <p className="mt-5 font-serif text-2xl text-[var(--kraft-dark)]">Bonanza Restaurante Bar</p>
         <p className="mt-2 font-serif text-stone-600">Compartiremos la ceremonia y la recepción en un mismo lugar.</p>
       </div>
-      <div className="relative mx-auto max-w-md py-2 before:absolute before:bottom-10 before:left-5 before:top-10 before:w-px before:bg-[var(--gold-light)] sm:before:left-1/2">
-        <article className="relative mb-10 pl-14 sm:pr-[calc(50%+2rem)] sm:text-right">
-          <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#fcfaf6] bg-[var(--kraft)] text-sm text-amber-100 shadow-md sm:left-1/2 sm:-translate-x-1/2">
+      <div className="relative mx-auto max-w-md py-2 before:absolute before:bottom-10 before:left-1/2 before:top-10 before:w-px before:-translate-x-1/2 before:bg-[var(--gold-light)]">
+        <article className="relative mb-10 pr-[calc(50%+1.75rem)] text-right">
+          <div className="absolute left-1/2 top-0 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border-4 border-[#fcfaf6] bg-[var(--kraft)] text-sm text-amber-100 shadow-md">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M14.504 8.522l-1.758 -4.032a.814 .814 0 0 0 -1.492 0l-1.759 4.032c-.19 .436 -.537 .784 -.973 .973l-4.032 1.759a.814 .814 0 0 0 0 1.492l4.033 1.758c.436 .19 .784 .538 .973 .974l1.759 4.033a.814 .814 0 0 0 1.492 0l1.758 -4.033c.19 -.436 .538 -.784 .974 -.974l4.033 -1.758a.814 .814 0 0 0 0 -1.492l-4.033 -1.759a1.88 1.88 0 0 1 -.974 -.973" />
@@ -28,11 +28,11 @@ function WeddingDetails() {
             </svg>
           </div>
           <p className="font-sans text-xl font-semibold uppercase tracking-wide text-[var(--kraft-dark)]">5:00 pm</p>
-          <h3 className="mt-1 font-serif text-3xl text-[var(--charcoal)]">Ceremonia</h3>
+          <h3 className="mt-1 font-serif text-xl text-[var(--charcoal)] min-[400px]:text-2xl sm:text-3xl">Ceremonia</h3>
           <p className="mt-2 font-serif leading-relaxed text-stone-600">Al aire libre</p>
         </article>
-        <article className="relative pl-14 sm:pl-[calc(50%+2rem)]">
-          <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#fcfaf6] bg-[var(--kraft)] text-xl text-amber-100 shadow-md sm:left-1/2 sm:-translate-x-1/2">
+        <article className="relative pl-[calc(50%+1.75rem)] text-left">
+          <div className="absolute left-1/2 top-0 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border-4 border-[#fcfaf6] bg-[var(--kraft)] text-xl text-amber-100 shadow-md">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M8 21l8 0" />
@@ -42,7 +42,7 @@ function WeddingDetails() {
             </svg>
           </div>
           <p className="font-sans text-xl font-semibold uppercase tracking-wide text-[var(--kraft-dark)]">7:00 pm</p>
-          <h3 className="mt-1 font-serif text-3xl text-[var(--charcoal)]">Recepción</h3>
+          <h3 className="mt-1 font-serif text-xl text-[var(--charcoal)] min-[400px]:text-2xl sm:text-3xl">Recepción</h3>
           <p className="mt-2 font-serif leading-relaxed text-stone-600">Dentro del restaurante</p>
         </article>
       </div>

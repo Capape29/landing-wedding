@@ -13,22 +13,6 @@ function App() {
       <div className="mx-auto min-h-screen w-full max-w-xl overflow-hidden border-x border-stone-200 bg-[#fcfaf6] shadow-2xl">
         <InvitationHero />
 
-        <section className="px-6 py-8 text-center">
-          <div className="border border-[#c4a480] bg-white/90 p-8 shadow-md">
-            <p className="font-serif text-base italic leading-relaxed text-stone-700">
-              “Con la bendición de Dios y el amor que une nuestras vidas, queremos compartir con ustedes la alegría de este día en el que uniremos nuestros corazones para siempre.”
-            </p>
-            <div className="my-6 flex items-center justify-center gap-4">
-              <span className="h-px w-12 bg-stone-300" />
-              <span className="font-script text-3xl text-[var(--gold)]">G &amp; L</span>
-              <span className="h-px w-12 bg-stone-300" />
-            </div>
-            <h2 className="font-serif text-xl uppercase tracking-widest">Gustavo &amp; Laura</h2>
-            <p className="mt-1 font-serif text-lg font-semibold tracking-widest text-[var(--kraft-dark)]">5 · 12 · 2026</p>
-            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+de+Gustavo+y+Laura&dates=20261205T210000Z/20261206T080000Z" target="_blank" rel="noreferrer" className="mt-8 inline-flex rounded-full bg-[var(--kraft-dark)] px-6 py-3 font-sans text-[10px] uppercase tracking-widest text-white shadow-md transition hover:bg-[var(--charcoal)]">Añádelo a tu calendario</a>
-          </div>
-        </section>
-
         <Countdown />
         <WeddingDetails />
 

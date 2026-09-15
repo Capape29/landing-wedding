@@ -15,13 +15,15 @@ function DressCode() {
         />
 
         <div className="relative z-10 grid gap-4 md:grid-cols-2">
-          <div className="flex items-center justify-center p-4">
+          <div className="flex flex-col items-center justify-center gap-4 p-4">
+            <img src="/images/dresscodemujer.svg" alt="" className="h-28 w-28 object-contain" />
             <p className="font-serif text-[28px] leading-[1.1] text-stone-700 italic">
               <span className="font-medium text-stone-900 not-italic">Damas:</span> Monos formales, largos o cortos, que reflejen elegancia y sofisticación.
             </p>
           </div>
 
-          <div className="flex items-center justify-center p-4">
+          <div className="flex flex-col items-center justify-center gap-4 p-4">
+            <img src="/images/dresscodehombre.svg" alt="" className="h-28 w-28 object-contain" />
             <p className="font-serif text-[28px] leading-[1.1] text-stone-700 italic">
               <span className="font-medium text-stone-900 not-italic">Caballeros:</span> Camisa manga larga con cuello mao y pantalón formal
             </p>
