@@ -1,5 +1,6 @@
 {
   "functions": {
+    "api/admin.js": { "maxDuration": 60 },
     "api/invitation.js": {
       "maxDuration": 60
     },
@@ -7,5 +8,6 @@
       "maxDuration": 60
     }
   },
-  "crons": [{ "path": "/api/sheets-sync", "schedule": "0 10 * * *" }]
+  "crons": [{ "path": "/api/sheets-sync", "schedule": "0 10 * * *" }],
+  "rewrites": [{ "source": "/admin", "destination": "/index.html" }]
 }

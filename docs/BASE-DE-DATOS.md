@@ -6,6 +6,14 @@ Se conservaron los dos grupos, siete integrantes y códigos existentes. Los cód
 
 ## Uso diario
 
+### Panel privado
+
+Abre https://landing-wedding-phi.vercel.app/admin e ingresa con la contraseña de administración. Puedes crear una invitación indicando familia, código único e integrantes (uno por línea). Al guardar queda disponible inmediatamente para los invitados; Sheets se actualiza en segundo plano.
+
+La lista del panel permite buscar por familia, código o integrante, consultar asistencia y canciones, y actualizar las respuestas. Usa «Cerrar sesión» al terminar. La sesión dura ocho horas. El panel permite crear y consultar; la edición y desactivación de invitaciones existentes se mantiene en Neon.
+
+El servidor requiere `ADMIN_PASSWORD` (mínimo 20 caracteres), una variable privada de Vercel, nunca `VITE_ADMIN_PASSWORD`. Cambiarla y desplegar invalida las sesiones anteriores. La contraseña inicial se entrega en `.cache/admin-access.txt`, excluido de Git. La sesión usa una cookie HttpOnly/Secure/SameSite y el inicio de sesión admite 10 intentos cada 15 minutos por origen. No se necesitan tablas nuevas.
+
 - Invitados: la misma URL y sus mismos códigos.
 - Organizador: consultar asistencia y canciones en la hoja existente. La base de datos es la fuente principal.
 - Administrar invitados: abrir la base `wedding-rsvp` desde Storage/Integrations del proyecto en Vercel. La tabla `wedding_invitations` contiene grupo, código y miembros. Mantener los identificadores estables y los códigos únicos en mayúsculas. El campo `members` es una lista JSON de objetos `{ "id": "identificador", "name": "Nombre" }`; no incluir `attending` en ella. No cambiar los IDs de personas que ya respondieron.
