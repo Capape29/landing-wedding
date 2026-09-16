@@ -10,7 +10,7 @@ Se conservaron los dos grupos, siete integrantes y códigos existentes. Los cód
 
 Abre https://landing-wedding-phi.vercel.app/admin e ingresa con la contraseña de administración. Puedes crear una invitación indicando familia, código único e integrantes (uno por línea). Al guardar queda disponible inmediatamente para los invitados; Sheets se actualiza en segundo plano.
 
-La lista del panel permite buscar por familia, código o integrante, consultar asistencia y canciones, y actualizar las respuestas. Usa «Cerrar sesión» al terminar. La sesión dura ocho horas. El panel permite crear y consultar; la edición y desactivación de invitaciones existentes se mantiene en Neon.
+La lista del panel permite buscar por familia, código o integrante, consultar asistencia y canciones, y actualizar las respuestas. Cada invitación permite editar familia, código e integrantes, o eliminarla con confirmación. La edición conserva los identificadores y respuestas de los integrantes existentes y las canciones; quitar un integrante elimina su confirmación. Eliminar una invitación borra todos sus datos. Ambas acciones actualizan la copia de Sheets en segundo plano. Usa «Cerrar sesión» al terminar. La sesión dura ocho horas.
 
 El servidor requiere `ADMIN_PASSWORD` (mínimo 20 caracteres), una variable privada de Vercel, nunca `VITE_ADMIN_PASSWORD`. Cambiarla y desplegar invalida las sesiones anteriores. La contraseña inicial se entrega en `.cache/admin-access.txt`, excluido de Git. La sesión usa una cookie HttpOnly/Secure/SameSite y el inicio de sesión admite 10 intentos cada 15 minutos por origen. No se necesitan tablas nuevas.
 

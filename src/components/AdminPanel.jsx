@@ -22,6 +22,8 @@ export default function AdminPanel() {
   const [search, setSearch] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [editing, setEditing] = useState(null)
+  const [deleting, setDeleting] = useState(null)
   async function refresh() {
     const data = await request()
     setInvitations(data.invitations)
@@ -71,6 +73,38 @@ export default function AdminPanel() {
           {!visible.length && <p>No hay invitaciones para mostrar.</p>}
           {visible.map(i => <article key={i.id} className="space-y-3 rounded-xl border border-stone-200 bg-white p-5">
             <h3 className="font-serif text-xl">{i.group_name}{!i.active && ' (inactiva)'}</h3><p>Código: <strong className="break-all">{i.code}</strong></p>
+            <div className="flex flex-wrap gap-3">
+              <button type="button" className={button} disabled={busy} onClick={() => { setEditing({ id: i.id, group: i.group_name, code: i.code, members: i.members.map(m => ({ ...m })) }); setDeleting(null) }}>Editar invitación</button>
+              <button type="button" className="rounded-lg border border-red-300 px-5 py-3 font-semibold text-red-800 disabled:opacity-50" disabled={busy} onClick={() => { setDeleting(i.id); setEditing(null) }}>Eliminar invitación</button>
+            </div>
+            {editing?.id === i.id && <form className="space-y-4 rounded-lg border border-stone-300 bg-stone-50 p-4" onSubmit={e => { e.preventDefault(); run(async () => {
+              const data = await request({ action: 'update', ...editing })
+              setInvitations(previous => previous.map(row => row.id === i.id ? data.invitation : row))
+              setEditing(null)
+              setMessage(`Invitación de ${data.invitation.group_name} actualizada. Código: ${data.invitation.code}. La copia de Sheets se actualizará en segundo plano.`)
+            }) }}>
+              <h4 className="font-semibold">Editar {i.group_name}</h4>
+              <fieldset disabled={busy} className="space-y-4">
+                <label className="block">Familia o grupo<input autoFocus className={field} required maxLength={150} value={editing.group} onChange={e => setEditing({ ...editing, group: e.target.value })} /></label>
+                <label className="block">Código de invitación<input className={field} required minLength={6} maxLength={32} pattern="[A-Za-z0-9]{6,32}" value={editing.code} onChange={e => setEditing({ ...editing, code: e.target.value.toUpperCase() })} /><span className="text-sm text-stone-600">Si cambias el código, comparte el nuevo con los invitados.</span></label>
+                <p className="text-sm text-stone-600">Las respuestas y canciones se conservan. Al quitar un integrante se elimina su confirmación.</p>
+                {editing.members.map((m, index) => <div key={m.id || `new-${index}`} className="flex items-end gap-2">
+                  <label className="min-w-0 flex-1">Integrante {index + 1}<input className={field} required maxLength={150} value={m.name} onChange={e => setEditing({ ...editing, members: editing.members.map((member, n) => n === index ? { ...member, name: e.target.value } : member) })} /></label>
+                  <button type="button" className="rounded-lg px-3 py-2 text-red-800 underline disabled:opacity-50" disabled={editing.members.length === 1} aria-label={`Quitar integrante ${index + 1}`} onClick={() => setEditing({ ...editing, members: editing.members.filter((_, n) => n !== index) })}>Quitar</button>
+                </div>)}
+                <button type="button" className="font-semibold underline disabled:opacity-50" disabled={editing.members.length >= 30} onClick={() => setEditing({ ...editing, members: [...editing.members, { name: '' }] })}>Añadir integrante</button>
+                <div className="flex flex-wrap gap-3"><button className={button}>{busy ? 'Guardando…' : 'Guardar cambios'}</button><button type="button" className="rounded-lg border border-stone-300 px-5 py-3" onClick={() => setEditing(null)}>Cancelar</button></div>
+              </fieldset>
+            </form>}
+            {deleting === i.id && <div role="alert" className="space-y-3 rounded-lg border border-red-300 bg-red-50 p-4 text-red-900">
+              <p>¿Eliminar la invitación de <strong>{i.group_name}</strong> ({i.code})? Se borrarán sus integrantes, confirmaciones y canciones. Esta acción no se puede deshacer desde el panel.</p>
+              <div className="flex flex-wrap gap-3"><button type="button" disabled={busy} className="rounded-lg bg-red-800 px-5 py-3 font-semibold text-white disabled:opacity-50" onClick={() => run(async () => {
+                await request({ action: 'delete', id: i.id })
+                setInvitations(previous => previous.filter(row => row.id !== i.id))
+                setDeleting(null)
+                setMessage(`Invitación de ${i.group_name} eliminada. La copia de Sheets se actualizará en segundo plano.`)
+              })}>{busy ? 'Eliminando…' : 'Sí, eliminar invitación'}</button><button type="button" disabled={busy} className="rounded-lg border border-red-300 px-5 py-3" onClick={() => setDeleting(null)}>Cancelar</button></div>
+            </div>}
             <ul className="space-y-2">{i.members.map(m => { const answer = i.attendance.find(a => a.id === m.id)?.attending; return <li key={m.id} className="flex flex-wrap justify-between gap-2"><span>{m.name}</span><strong className={answer === true ? 'text-green-800' : answer === false ? 'text-red-800' : 'text-stone-500'}>{answer === true ? '✓ Asistirá' : answer === false ? 'No asistirá' : 'Pendiente'}</strong></li> })}</ul>
             <p className="font-semibold">Canciones sugeridas</p>{i.songs.length ? <ul>{i.songs.map((s, index) => <li key={index}>{songTitle(s)}{s.artist && ` — ${s.artist}`}{s.youtube?.channel && <span> · Canal: {s.youtube.channel}</span>}{s.youtubeUrl && <a className="ml-2 underline" href={s.youtubeUrl} target="_blank" rel="noopener noreferrer">Abrir en YouTube</a>}</li>)}</ul> : <p className="text-stone-500">Sin canciones todavía.</p>}
           </article>)}

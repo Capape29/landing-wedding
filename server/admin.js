@@ -1,4 +1,5 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
+import { transaction } from './database.js'
 
 const fail = (status, message) => { throw Object.assign(new Error(message), { status }) }
 const sign = (value, secret) => createHmac('sha256', secret).update(value).digest('hex')
@@ -35,4 +36,38 @@ export async function createInvitation(pool, payload) {
     if (error.code === '23505') fail(409, 'Ese código ya existe. Usa otro o revisa la lista si ya guardaste esta invitación.')
     throw error
   }
+}
+
+export async function updateInvitation(pool, payload) {
+  const group = typeof payload.group === 'string' ? payload.group.trim() : ''
+  const code = typeof payload.code === 'string' ? payload.code.trim().toUpperCase() : ''
+  if (typeof payload.id !== 'string' || !payload.id || !group || group.length > 150 || !/^[A-Z0-9]{6,32}$/.test(code)) fail(400, 'Indica la invitación, familia y un código válido.')
+  if (!Array.isArray(payload.members) || !payload.members.length || payload.members.length > 30 || payload.members.some(m => !m || typeof m.name !== 'string' || !m.name.trim() || m.name.trim().length > 150 || (m.id !== undefined && typeof m.id !== 'string'))) fail(400, 'Agrega entre 1 y 30 integrantes con nombres válidos.')
+  try {
+    return await transaction(pool, async client => {
+      const { rows: [existing] } = await client.query('SELECT * FROM wedding_invitations WHERE id=$1 FOR UPDATE', [payload.id])
+      if (!existing) fail(404, 'La invitación ya no existe. Actualiza la lista.')
+      const known = new Set(existing.members.map(m => m.id))
+      const used = new Set()
+      const members = payload.members.map(m => {
+        if (m.id !== undefined && (!known.has(m.id) || used.has(m.id))) fail(400, 'Los integrantes no corresponden a esta invitación.')
+        const id = m.id ?? randomUUID()
+        used.add(id)
+        return { id, name: m.name.trim() }
+      })
+      const attendance = existing.attendance.filter(a => used.has(a.id))
+      const { rows: [row] } = await client.query(`UPDATE wedding_invitations SET group_name=$2,code=$3,members=$4::jsonb,attendance=$5::jsonb WHERE id=$1 RETURNING *`, [payload.id, group, code, JSON.stringify(members), JSON.stringify(attendance)])
+      return row
+    })
+  } catch (error) {
+    if (error.code === '23505') fail(409, 'Ese código ya existe. Usa otro.')
+    throw error
+  }
+}
+
+export async function deleteInvitation(pool, payload) {
+  if (typeof payload.id !== 'string' || !payload.id) fail(400, 'Indica la invitación que deseas eliminar.')
+  const { rows: [row] } = await pool.query('DELETE FROM wedding_invitations WHERE id=$1 RETURNING id', [payload.id])
+  if (!row) fail(404, 'La invitación ya no existe. Actualiza la lista.')
+  return row
 }

@@ -1,7 +1,7 @@
 import { waitUntil } from '@vercel/functions'
 import { database } from '../server/database.js'
 import { syncSheets } from '../server/sheets-mirror.js'
-import { createInvitation, loginLimit, passwordMatches, sessionToken, validSession } from '../server/admin.js'
+import { createInvitation, updateInvitation, deleteInvitation, loginLimit, passwordMatches, sessionToken, validSession } from '../server/admin.js'
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store')
@@ -33,10 +33,11 @@ export default async function handler(req, res) {
       const { rows } = await pool.query('SELECT * FROM wedding_invitations ORDER BY group_name, id')
       return res.json({ invitations: rows })
     }
-    if (body.action !== 'create') return res.status(400).json({ error: 'Acción inválida.' })
-    const invitation = await createInvitation(pool, body)
+    if (!['create', 'update', 'delete'].includes(body.action)) return res.status(400).json({ error: 'Acción inválida.' })
+    const operation = { create: createInvitation, update: updateInvitation, delete: deleteInvitation }[body.action]
+    const invitation = await operation(pool, body)
     waitUntil(syncSheets(pool).catch(() => console.error('admin_sheets_mirror_pending')))
-    return res.status(201).json({ invitation })
+    return res.status(body.action === 'create' ? 201 : 200).json({ invitation })
   } catch (error) {
     if (error instanceof SyntaxError || error instanceof TypeError) return res.status(400).json({ error: 'Solicitud inválida.' })
     return res.status(error.status || 503).json({ error: error.status ? error.message : 'No pudimos completar la operación. Actualiza la lista antes de volver a guardar.' })
