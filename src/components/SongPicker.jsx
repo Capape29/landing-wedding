@@ -44,7 +44,7 @@ export default function SongPicker({ song, index, code, disabled, onSelect, edit
       <p role="status" className="text-sm">{message}</p>
       <ul className="space-y-2">{results.map(result => <li key={result.videoId} className="space-y-2 rounded-lg border border-[#dcccb5] p-2">
         <div className="flex items-start gap-2"><img src={result.thumbnail} alt="" width="80" height="60" className="shrink-0" /><div className="min-w-0 text-sm"><p className="break-words font-medium">{decode(result.title)}</p><p className="break-words">Canal: {decode(result.channel)}</p></div></div>
-        <button type="button" className={button} aria-label={`Agregar ${decode(result.title)}`} onClick={() => { onSelect({ title: '', artist: '', youtubeUrl: result.youtubeUrl, youtube: { title: result.title, channel: result.channel } }); cancel() }}>{editing ? 'Usar esta canción' : 'Agregar'}</button>
+        <button type="button" className="min-h-11 w-full rounded-lg bg-[#355b45] px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#254332] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#355b45] disabled:opacity-50" aria-label={`Agregar ${decode(result.title)}`} onClick={() => { onSelect({ title: '', artist: '', youtubeUrl: result.youtubeUrl, youtube: { title: result.title, channel: result.channel } }); cancel() }}>{editing ? 'Usar esta canción' : 'Agregar'}</button>
       </li>)}</ul>
     </div>
   </fieldset>

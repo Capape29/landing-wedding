@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 const inputClass = 'w-full rounded-xl border border-[#d8c9b2] bg-white px-4 py-3 text-sm focus-visible:outline-2 focus-visible:outline-[#8e5630]'
 const buttonClass = 'min-h-11 rounded-full bg-[var(--kraft-dark)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--charcoal)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
+const saveButtonClass = 'min-h-11 rounded-xl bg-[var(--kraft-dark)] px-3 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
 const emptySongs = () => Array.from({ length: 4 }, () => ({ title: '', artist: '' }))
 
 function Feedback({ state }) {
@@ -16,18 +17,11 @@ function Feedback({ state }) {
   </div>
 }
 
-function SavedStatus({ saved, dirty, busy, title, children }) {
-  return <div role="status" aria-live="polite" className={`flex items-start gap-3 rounded-2xl border-2 p-4 ${saved && !dirty ? 'border-green-600 bg-green-50 text-green-900' : 'border-amber-300 bg-amber-50 text-amber-900'}`}>
-    <span aria-hidden="true" className="text-3xl font-bold">{saved && !dirty ? '✓' : '!'}</span>
-    <div>
-      <p className="text-lg font-bold">{busy ? 'Guardando…' : dirty ? 'Cambios sin guardar' : saved ? title : 'Pendiente de guardar'}</p>
-      <p className="mt-1 text-sm">{busy ? 'Espera la confirmación antes de cerrar la página.' : dirty || !saved ? 'Pulsa el botón de guardar para enviar tu respuesta.' : children}</p>
-    </div>
-  </div>
-}
-
-function closeLabel(value) {
-  return new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Bogota' }).format(new Date(new Date(value).getTime() - 1))
+function SavedStatus({ saved, dirty, busy, title }) {
+  if (busy || (!saved && !dirty)) return null
+  return <p role="status" aria-live="polite" className={`min-w-0 rounded-lg px-3 py-2 text-xs leading-relaxed ${saved && !dirty ? 'bg-green-50 text-green-900' : 'bg-amber-50 text-amber-900'}`}>
+    {saved && !dirty ? '\u2713 ' + title : 'Cambios sin guardar'}
+  </p>
 }
 
 function RSVPWizard() {
@@ -114,11 +108,7 @@ function RSVPWizard() {
             }}>Cambiar invitación</button>
           </div>
           <form onSubmit={event => save(event, 'attendance')} className="space-y-4" aria-busy={attendanceState.busy}>
-            <SavedStatus saved={invitation.attendanceUpdatedAt} dirty={attendanceDirty} busy={attendanceState.busy} title="Respuesta de asistencia guardada">
-              {invitation.attendees.filter(person => person.attending === true).length} asistirán · {invitation.attendees.filter(person => person.attending === false).length} no asistirán. Tu respuesta ya fue enviada.
-            </SavedStatus>
             <p className="text-sm">Indica quiénes podrán acompañarnos.</p>
-            <p className="text-xs">Disponible hasta: {closeLabel(invitation.attendanceClose)} (hora de Colombia).</p>
             {invitation.attendanceClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para confirmar asistencia ha terminado. Puedes consultar tu respuesta.</p>}
             <fieldset disabled={attendanceState.busy || invitation.attendanceClosed} className="space-y-4">
               <legend className="sr-only">Asistencia de los integrantes</legend>
@@ -137,10 +127,12 @@ function RSVPWizard() {
                   </div>
                 </fieldset>
               ))}
-              <button className={buttonClass} disabled={attendanceState.busy || invitation.attendanceClosed || (!!invitation.attendanceUpdatedAt && !attendanceDirty)}>{attendanceState.busy ? 'Guardando…' : invitation.attendanceUpdatedAt && !attendanceDirty ? '✓ Respuesta guardada' : 'Guardar asistencia'}</button>
+              <div className="grid grid-cols-2 items-center gap-2">
+              <button className={saveButtonClass} disabled={attendanceState.busy || invitation.attendanceClosed || (!!invitation.attendanceUpdatedAt && !attendanceDirty)}>{attendanceState.busy ? 'Guardando…' : 'Guardar asistencia'}</button>
+              <SavedStatus saved={invitation.attendanceUpdatedAt} dirty={attendanceDirty} busy={attendanceState.busy} title="Tu respuesta ya fue enviada." />
+              </div>
             </fieldset>
-            {invitation.attendanceUpdatedAt && <p className="text-xs">Ya tienes una respuesta guardada. {invitation.attendanceClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
-            <Feedback state={attendanceState} />
+            {(attendanceState.error || (attendanceState.busy && attendanceState.message)) && <Feedback state={attendanceState} />}
           </form>
         </>
       )}
@@ -151,10 +143,8 @@ function RSVPWizard() {
           <h2 id="songs-heading" className="min-w-0 text-center font-script text-4xl leading-tight text-[var(--gold)] sm:text-5xl">¡DJ, pon mi canción!</h2>
           <img src="/images/disco%20de%20vinilo.svg" alt="" className="h-12 w-12 shrink-0 object-contain sm:h-14 sm:w-14" />
         </div>
-        <p className="font-serif text-lg leading-relaxed">La pista de baile nos espera y queremos saber cuál es esa canción que no puede faltar.</p>
-        <p className="text-sm">{invitation
-          ? 'Elige hasta cuatro canciones para tu invitación. Puedes agregarlas ahora o volver después; no son necesarias para confirmar asistencia.'
-          : 'Ingresa el código de tu invitación para sugerir hasta cuatro canciones. No necesitas confirmar asistencia para hacerlo.'}</p>
+        {!invitation && <p className="font-serif text-lg leading-relaxed">La pista de baile nos espera y queremos saber cuál es esa canción que no puede faltar.</p>}
+        <p className="text-sm">{invitation ? 'Elige hasta 4 canciones.' : 'Ingresa el código de tu invitación para sugerir hasta cuatro canciones. No necesitas confirmar asistencia para hacerlo.'}</p>
         {!invitation ? (
           <button type="button" className={buttonClass} disabled={access.busy} onClick={() => {
             const input = document.getElementById('invitation-code')
@@ -165,10 +155,6 @@ function RSVPWizard() {
           </button>
         ) : (
           <form onSubmit={event => save(event, 'songs')} className="space-y-4" aria-busy={songsState.busy}>
-            <SavedStatus saved={invitation.songsUpdatedAt} dirty={songsDirty || songDraft} busy={songsState.busy} title="Selección de canciones guardada">
-              {invitation.songs.length ? `${invitation.songs.length} canciones enviadas al DJ.` : 'Guardaste tu selección sin canciones.'}
-            </SavedStatus>
-            <p className="text-xs">Disponible hasta: {closeLabel(invitation.songsClose)} (hora de Colombia).</p>
             {invitation.songsClosed && <p role="status" className="rounded-xl bg-[#f5ead8] p-3 text-sm">El plazo para sugerir canciones ha terminado. Puedes consultar tu selección.</p>}
             <fieldset disabled={songsState.busy || invitation.songsClosed} className="space-y-4">
               <legend className="sr-only">Hasta cuatro canciones</legend>
@@ -176,10 +162,12 @@ function RSVPWizard() {
                 setSongs(value)
                 setSongsState({ busy: false, message: '', error: false })
               }} />
-              <button className={buttonClass} disabled={songDraft || songsState.busy || invitation.songsClosed || (!!invitation.songsUpdatedAt && !songsDirty)}>{songsState.busy ? 'Guardando…' : invitation.songsUpdatedAt && !songsDirty && !songDraft ? '✓ Selección guardada' : 'Guardar canciones'}</button>
+              <div className="grid grid-cols-2 items-center gap-2">
+              <button className={saveButtonClass} disabled={songDraft || songsState.busy || invitation.songsClosed || (!!invitation.songsUpdatedAt && !songsDirty)}>{songsState.busy ? 'Guardando…' : 'Guardar canciones'}</button>
+              <SavedStatus saved={invitation.songsUpdatedAt} dirty={songsDirty || songDraft} busy={songsState.busy} title="Tus canciones ya fueron enviadas." />
+              </div>
             </fieldset>
-            {invitation.songsUpdatedAt && <p className="text-xs">Ya tienes una selección guardada. {invitation.songsClosed ? '' : 'Puedes actualizarla hasta el cierre.'}</p>}
-            <Feedback state={songsState} />
+            {(songsState.error || (songsState.busy && songsState.message)) && <Feedback state={songsState} />}
           </form>
         )}
         </div>

@@ -1,6 +1,6 @@
 function LocationButton({ href, children }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-full border border-[var(--gold)] px-5 py-2 font-sans text-[10px] uppercase tracking-wider text-[var(--kraft-dark)] transition hover:bg-[var(--gold)] hover:text-white">
+    <a href={href} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-full border border-[var(--kraft-dark)] bg-[var(--kraft-dark)] px-5 py-2 font-sans text-[10px] font-semibold uppercase tracking-wider text-white shadow-sm transition-colors hover:border-[#704224] hover:bg-[#704224] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--kraft-dark)]">
       {children}
     </a>
   )

@@ -2,7 +2,16 @@
 const GOOGLE_PHOTOS_ALBUM_URL = 'https://photos.app.goo.gl/KCYiQEM9m7xJpbzo7'
 
 function PhotoGallery() {
-  const buttonClassName = 'inline-flex min-h-11 items-center justify-center rounded-full bg-[#c5ab84] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b99d74] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8e5630]'
+  const buttonClassName = 'inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full border border-[var(--kraft-dark)] bg-[var(--kraft-dark)] px-5 py-3.5 text-sm font-semibold text-white shadow-md transition-colors hover:border-[#704224] hover:bg-[#704224] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--kraft-dark)] sm:w-auto sm:px-8'
+  const buttonContent = (
+    <>
+      <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" />
+        <circle cx="12" cy="13" r="4" />
+      </svg>
+      <span>Compartir fotos</span>
+    </>
+  )
 
   return (
     <div className="grid grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-2 sm:grid-cols-[3rem_minmax(0,1fr)_3rem] sm:gap-4">
@@ -28,7 +37,7 @@ function PhotoGallery() {
             className={buttonClassName}
             aria-describedby="album-help"
           >
-            Compartir fotos
+            {buttonContent}
           </a>
         ) : (
           <button
@@ -37,7 +46,7 @@ function PhotoGallery() {
             className={`${buttonClassName} cursor-not-allowed opacity-60`}
             aria-describedby="album-status album-help"
           >
-            Compartir fotos
+            {buttonContent}
           </button>
         )}
         {!GOOGLE_PHOTOS_ALBUM_URL && (

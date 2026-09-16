@@ -18,7 +18,7 @@ function App() {
 
         <section className="py-6" aria-label="Detalles de nuestra celebración">
           <RevealImage
-            src="/images/imagen7.webp"
+            src="/images/imagen10.webp"
             alt="Detalles de la celebración de la boda"
             className="fade-edge-image h-auto w-full rounded-none object-contain shadow-sm"
           />
