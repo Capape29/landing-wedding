@@ -30,10 +30,8 @@ function DressCode() {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto mt-6 max-w-[440px] rounded-md bg-[#8c5333] px-5 py-4 text-center text-[15px] font-serif italic text-amber-100 shadow-none">
-          El color blanco está reservado exclusivamente para la novia.
-          <br />
-          Colores prohibidos: beige y azul pastel.
+        <div className="relative z-10 mx-auto mt-6 max-w-[440px] rounded-md bg-[#8c5333] px-5 py-4 text-center text-[1.5rem] font-serif italic text-amber-100 shadow-none">
+          Colores no permitidos para invitados: blanco, beige y azul pastel.
         </div>
       </div>
     </section>

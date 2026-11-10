@@ -17,7 +17,7 @@ El servidor requiere `ADMIN_PASSWORD` (mínimo 20 caracteres), una variable priv
 - Invitados: la misma URL y sus mismos códigos.
 - Organizador: consultar asistencia y canciones en la hoja existente. La base de datos es la fuente principal.
 - Administrar invitados: abrir la base `wedding-rsvp` desde Storage/Integrations del proyecto en Vercel. La tabla `wedding_invitations` contiene grupo, código y miembros. Mantener los identificadores estables y los códigos únicos en mayúsculas. El campo `members` es una lista JSON de objetos `{ "id": "identificador", "name": "Nombre" }`; no incluir `attending` en ella. No cambiar los IDs de personas que ya respondieron.
-- Cierres: `wedding_config`, campos `attendance_close` y `songs_close`. Actualmente ambos son el 6 de noviembre de 2026 a las 00:00 de Colombia, por lo que se aceptan respuestas hasta el día anterior.
+- Cierres: `wedding_config`, campos `attendance_close` y `songs_close`. Ambos son `2026-12-01T00:00:00-05:00`: se aceptan confirmaciones de asistencia y canciones durante todo el 30 de noviembre de 2026, hora de Colombia.
 - Desactivar una invitación: `active=false`. No borrar registros con respuestas que se deban conservar.
 
 ## Copia de Sheets
